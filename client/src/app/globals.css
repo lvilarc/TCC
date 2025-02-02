@@ -2,6 +2,47 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 12px;
+    /* Aumentando a largura para um visual mais elegante */
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: #f0f0f0;
+    /* Fundo mais suave para o track */
+    border-radius: 20px;
+    /* Bordas arredondadas para o track */
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: linear-gradient(145deg, #16a34a, #22c55e);
+    /* Gradiente com green-600 do Tailwind */
+    border-radius: 20px;
+    /* Bordas arredondadas para o thumb */
+    border: 3px solid #fff;
+    /* Borda branca para dar contraste */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    /* Sombra suave */
+    transition: background 0.3s ease, transform 0.3s ease;
+    /* Animações suaves */
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(145deg, #22c55e, #16a34a); 
+    /* Inversão do gradiente no hover */
+    transform: scale(1.1);
+    /* Efeito de aumentar um pouco no hover */
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:active {
+    background: linear-gradient(145deg, #a3e635, #84cc16);
+    /* Gradiente mais claro para quando pressionado */
+    transform: scale(1);
+    /* Reseta o efeito de escala no click */
+  }
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -17,5 +58,5 @@
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: Montserrat, Arial, Helvetica, sans-serif;
 }
