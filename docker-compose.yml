@@ -1,0 +1,10 @@
+services:
+  db:
+    image: postgres:14.2-alpine
+    env_file:
+      - .env
+    volumes:
+      - ./backend/postgres/init/create_extension.sql:/docker-entrypoint-initdb.d/init.sql
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - "5432:5432"
