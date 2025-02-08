@@ -3,11 +3,11 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Montserrat } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
+import ClientProvider from "@/components/ClientProvider";
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
   subsets: ["latin"],
-  // weight: ["400", "700"], // Ajuste os pesos conforme necessário
 });
 
 const geistSans = Geist({
@@ -35,12 +35,14 @@ export default function RootLayout({
       <body
         className={`${montserrat.variable} custom-scrollbar antialiased`}
       >
-        <Navbar />
-        <div className="py-28">
-          <main>
-            {children}
-          </main>
-        </div>
+        <ClientProvider>
+          <Navbar />
+          <div className="py-28">
+            <main>
+              {children}
+            </main>
+          </div>
+        </ClientProvider>
       </body>
     </html>
   );

@@ -1,19 +1,29 @@
 import { useState } from "react";
 import { CloseIcon } from "./icons/CloseIcon";
 import { ArrowLongRightIcon } from "./icons/ArrowRightIcon";
+import { SignUpRequest, useSignUp } from "@/hooks/useSignUp";
 
 interface CadastroModalProps {
     onClose: () => void;
 }
 
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
 const CadastroModal: React.FC<CadastroModalProps> = ({ onClose }) => {
+    const { signUp, isPending } = useSignUp();
     const [showExtraFields, setShowExtraFields] = useState(false);
-    const [email, setEmail] = useState("");
-    const [fullName, setFullName] = useState("");
-    const [password, setPassword] = useState("");
-    const [username, setUsername] = useState("");
+    const [formData, setFormData] = useState<SignUpRequest>({
+        name: "",
+        username: "",
+        email: "",
+        password: ""
+    });
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { id, value } = e.target;
+        setFormData((prev) => ({
+            ...prev,
+            [id]: value,
+        }));
+    };
 
     const handleNextStep = () => {
         const emailInput = document.getElementById("email") as HTMLInputElement;
@@ -25,10 +35,15 @@ const CadastroModal: React.FC<CadastroModalProps> = ({ onClose }) => {
         setShowExtraFields(true);
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log({ email, fullName, password });
-        onClose();
+        console.log(formData);
+        try {
+            await signUp(formData);
+            onClose();
+        } catch (error) {
+            console.error("Erro ao cadastrar:", error);
+        }
     };
 
     return (
@@ -45,8 +60,8 @@ const CadastroModal: React.FC<CadastroModalProps> = ({ onClose }) => {
                         <input
                             type="email"
                             id="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            value={formData.email}
+                            onChange={handleInputChange}
                             className="mt-1 p-2 border border-gray-300 rounded w-full"
                             placeholder="Digite seu e-mail"
                             required
@@ -56,12 +71,12 @@ const CadastroModal: React.FC<CadastroModalProps> = ({ onClose }) => {
                     {showExtraFields && (
                         <>
                             <div className="mb-4">
-                                <label htmlFor="fullName" className="block text-sm font-medium">Nome Completo</label>
+                                <label htmlFor="name" className="block text-sm font-medium">Nome Completo</label>
                                 <input
                                     type="text"
-                                    id="fullName"
-                                    value={fullName}
-                                    onChange={(e) => setFullName(e.target.value)}
+                                    id="name"
+                                    value={formData.name}
+                                    onChange={handleInputChange}
                                     className="mt-1 p-2 border border-gray-300 rounded w-full"
                                     placeholder="Digite seu nome completo"
                                     required
@@ -72,8 +87,8 @@ const CadastroModal: React.FC<CadastroModalProps> = ({ onClose }) => {
                                 <input
                                     type="password"
                                     id="password"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
+                                    value={formData.password}
+                                    onChange={handleInputChange}
                                     className="mt-1 p-2 border border-gray-300 rounded w-full"
                                     placeholder="Crie uma senha"
                                     required
@@ -86,8 +101,8 @@ const CadastroModal: React.FC<CadastroModalProps> = ({ onClose }) => {
                                     <input
                                         type="username"
                                         id="username"
-                                        value={username}
-                                        onChange={(e) => setUsername(e.target.value)}
+                                        value={formData.username}
+                                        onChange={handleInputChange}
                                         className="p-2 border border-gray-300 rounded w-full pl-[26px]"
                                         required
                                     />
