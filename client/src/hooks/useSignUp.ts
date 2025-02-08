@@ -1,4 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
+import Cookies from 'js-cookie';
 
 export interface SignUpRequest {
     name: string;
@@ -7,8 +8,10 @@ export interface SignUpRequest {
     password: string;
 }
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL as string;
+
 const signUp = async (signUpRequest: SignUpRequest) => {
-    const endpoint = '/users/'
+    const endpoint = `${API_URL}/auth/signup`
     const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
@@ -31,7 +34,8 @@ export function useSignUp() {
             console.error("Erro ao cadastrar:", error);
         },
         onSuccess: (data) => {
-            console.log("Usuário cadastrado com sucesso:", data);
+            const { token } = data;
+            Cookies.set('token', token, { expires: 7 });
         },
     });
 

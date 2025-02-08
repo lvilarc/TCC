@@ -8,7 +8,7 @@ interface CadastroModalProps {
 }
 
 const CadastroModal: React.FC<CadastroModalProps> = ({ onClose }) => {
-    const { signUp, isPending } = useSignUp();
+    const { signUp, isPending, data } = useSignUp();
     const [showExtraFields, setShowExtraFields] = useState(false);
     const [formData, setFormData] = useState<SignUpRequest>({
         name: "",
