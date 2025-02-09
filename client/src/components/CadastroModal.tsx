@@ -2,13 +2,19 @@ import { useState } from "react";
 import { CloseIcon } from "./icons/CloseIcon";
 import { ArrowLongRightIcon } from "./icons/ArrowRightIcon";
 import { SignUpRequest, useSignUp } from "@/hooks/useSignUp";
+import { jwtDecode } from "jwt-decode";
+import { useAuthContext } from "@/hooks/AuthContext/useAuthContext";
+import { User } from "@/types/User";
+import { JwtPayload } from "@/types/JwtPayload";
+import Cookies from 'js-cookie';
 
 interface CadastroModalProps {
     onClose: () => void;
 }
 
 const CadastroModal: React.FC<CadastroModalProps> = ({ onClose }) => {
-    const { signUp, isPending, data } = useSignUp();
+    const { setUserFromToken } = useAuthContext();
+    const { isPending, data, isSuccess, mutateAsync } = useSignUp();
     const [showExtraFields, setShowExtraFields] = useState(false);
     const [formData, setFormData] = useState<SignUpRequest>({
         name: "",
@@ -39,7 +45,10 @@ const CadastroModal: React.FC<CadastroModalProps> = ({ onClose }) => {
         e.preventDefault();
         console.log(formData);
         try {
-            await signUp(formData);
+            const response = await mutateAsync(formData);
+            const token = response.token;
+            setUserFromToken(token)
+            Cookies.set('token', token, { expires: 7 });
             onClose();
         } catch (error) {
             console.error("Erro ao cadastrar:", error);

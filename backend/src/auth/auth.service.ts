@@ -16,8 +16,22 @@ export class AuthService {
     ) { }
 
     async generateToken(user: User) {
-        const payload: JwtPayload = { username: user.username, sub: user.id };
+        const payload: JwtPayload = {
+            username: user.username,
+            sub: user.id,
+            name: user.name
+        };
         return this.jwtService.sign(payload);
+    }
+
+    async validateToken(token: string) {
+        try {
+            const decoded = this.jwtService.verify(token); 
+            const user = await this.usersService.findUserById(decoded.sub); 
+            return user; 
+        } catch (error) {
+            throw new Error('Token inválido ou expirado'); 
+        }
     }
 
     async signUp(signUpData: SignUpRequest) {
@@ -30,8 +44,7 @@ export class AuthService {
         const token = await this.generateToken(user)
 
         return {
-            user,
-            token,
+            token
         };
     }
 

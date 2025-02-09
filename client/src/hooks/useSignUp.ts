@@ -1,5 +1,4 @@
 import { useMutation } from '@tanstack/react-query';
-import Cookies from 'js-cookie';
 
 export interface SignUpRequest {
     name: string;
@@ -28,16 +27,16 @@ const signUp = async (signUpRequest: SignUpRequest) => {
 };
 
 export function useSignUp() {
-    const { mutate, isPending, isError, isSuccess, data, error } = useMutation({
+    const { mutate, isPending, isError, isSuccess, data, error, mutateAsync } = useMutation({
         mutationFn: signUp,
         onError: (error) => {
             console.error("Erro ao cadastrar:", error);
         },
         onSuccess: (data) => {
-            const { token } = data;
-            Cookies.set('token', token, { expires: 7 });
+            // const { token } = data;
+            // Cookies.set('token', token, { expires: 7 });
         },
     });
 
-    return { signUp: mutate, isPending, isError, isSuccess, data, error };
+    return { mutate, mutateAsync, isPending, isError, isSuccess, data, error };
 }

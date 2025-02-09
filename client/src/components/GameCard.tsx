@@ -8,7 +8,7 @@ interface GameCardProps {
 
 export default function GameCard({ title, championshipId }: GameCardProps) {
   return (
-    <Link href={`home/${championshipId}`}>
+    <Link href={`games/${championshipId}`}>
       {/* Card */}
       <div className="w-[500px] rounded-lg overflow-hidden shadow-md border-2 hover:border-stone-500">
         {/* Imagem */}

@@ -3,14 +3,16 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import CadastroModal from "./CadastroModal";
+import { useAuthContext } from "@/hooks/AuthContext/useAuthContext";
 
 export default function Navbar() {
+    const { user } = useAuthContext();
     const [cadastroModalOpen, setCadastroModalOpen] = useState(false);
     useEffect(() => {
         if (cadastroModalOpen) {
-            document.body.style.overflow = "hidden";  // Bloqueia a rolagem
+            document.body.style.overflow = "hidden";
         } else {
-            document.body.style.overflow = "auto";  // Restaura a rolagem
+            document.body.style.overflow = "auto";
         }
     }, [cadastroModalOpen]);
     return (
@@ -44,14 +46,19 @@ export default function Navbar() {
                         </li>
                     </ul>
                 </div>
-                <div className="flex gap-6 items-center font-semibold text-sm">
-                    <button>Entrar</button>
-                    <button className="px-5 py-2 bg-green-600 rounded-full"
-                        onClick={() => {
-                            setCadastroModalOpen(true);
-                        }}
-                    >Criar conta</button>
-                </div>
+                {user ? (
+                    <div>Bem vindo {user.username}</div>
+                ) : (
+                    <div className="flex gap-6 items-center font-semibold text-sm">
+                        <button>Entrar</button>
+                        <button className="px-5 py-2 bg-green-600 rounded-full"
+                            onClick={() => {
+                                setCadastroModalOpen(true);
+                            }}
+                        >Criar conta</button>
+                    </div>
+                )}
+
             </nav>
         </>
     );

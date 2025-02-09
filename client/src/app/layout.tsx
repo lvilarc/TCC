@@ -4,6 +4,8 @@ import { Montserrat } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import ClientProvider from "@/components/ClientProvider";
+import { AuthContextProvider } from "@/contexts/AuthContext";
+import AuthCheck from "@/components/Auth/AuthCheck";
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
@@ -36,12 +38,16 @@ export default function RootLayout({
         className={`${montserrat.variable} custom-scrollbar antialiased`}
       >
         <ClientProvider>
-          <Navbar />
-          <div className="py-28">
-            <main>
-              {children}
-            </main>
-          </div>
+          <AuthContextProvider>
+            <AuthCheck>
+              <Navbar />
+              <div className="py-28">
+                <main>
+                  {children}
+                </main>
+              </div>
+            </AuthCheck>
+          </AuthContextProvider>
         </ClientProvider>
       </body>
     </html>
