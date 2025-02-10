@@ -15,8 +15,10 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import LoginModal from './LoginModal';
+import { useRouter } from 'next/navigation';
 
 export default function Navbar() {
+    const router = useRouter();
     const { user } = useAuthContext();
     const [cadastroModalOpen, setCadastroModalOpen] = useState(false);
     const [loginModalOpen, setLoginModalOpen] = useState(false);
@@ -67,7 +69,9 @@ export default function Navbar() {
                 </div>
                 {user ? (
                     <div className="flex items-center gap-2">
-                        <button className="whitespace-nowrap text-sm font-semibold hover:underline">@{user.username}</button>
+                        <Link href={`/perfil/${user.username}`}>
+                            <div className="whitespace-nowrap text-sm font-semibold hover:underline">@{user.username}</div>
+                        </Link>
 
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
@@ -76,7 +80,9 @@ export default function Navbar() {
                             </DropdownMenuTrigger>
                             <DropdownMenuContent className="w-auto">
                                 <DropdownMenuGroup>
-                                    <DropdownMenuItem>
+                                    <DropdownMenuItem onClick={()=>{
+                                        router.push(`/perfil/${user.username}`)
+                                    }}>
                                         Meu perfil
                                     </DropdownMenuItem>
                                     <DropdownMenuItem>
