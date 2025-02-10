@@ -2,7 +2,7 @@
 
 import Cookies from 'js-cookie';
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import CadastroModal from "./CadastroModal";
 import { useAuthContext } from "@/hooks/AuthContext/useAuthContext";
 import { UserCircle } from "./icons/UserCircle";
@@ -20,20 +20,24 @@ export default function Navbar() {
     const { user } = useAuthContext();
     const [cadastroModalOpen, setCadastroModalOpen] = useState(false);
     const [loginModalOpen, setLoginModalOpen] = useState(false);
-    useEffect(() => {
-        if (cadastroModalOpen || loginModalOpen) {
-            document.body.style.overflow = "hidden";
-        } else {
-            document.body.style.overflow = "auto";
-        }
-    }, [cadastroModalOpen]);
+
     return (
         <>
             {cadastroModalOpen && (
-                <CadastroModal onClose={() => setCadastroModalOpen(false)} />
+                <CadastroModal onClose={() => setCadastroModalOpen(false)} openLogin={() => {
+                    setCadastroModalOpen(false);
+                    setTimeout(() => {
+                        setLoginModalOpen(true);
+                    }, 100);
+                }} />
             )}
             {loginModalOpen && (
-                <LoginModal onClose={() => setLoginModalOpen(false)} />
+                <LoginModal onClose={() => setLoginModalOpen(false)} openCadastro={() => {
+                    setLoginModalOpen(false);
+                    setTimeout(() => {
+                        setCadastroModalOpen(true);
+                    }, 100);
+                }} />
             )}
             <nav className="bg-white text-stone-800 py-4 flex justify-between px-10 lg:px-40 items-center fixed top-0 left-0 w-full border-b">
                 <div className="flex items-center">

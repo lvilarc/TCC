@@ -20,12 +20,14 @@ import { LoginRequest, useLogin } from "@/hooks/useLogin";
 
 interface LoginModalProps {
     onClose: () => void;
+    openCadastro: () => void;
 }
 
-const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
+const LoginModal: React.FC<LoginModalProps> = ({ onClose, openCadastro }) => {
     const { setUserFromToken } = useAuthContext();
     const { isPending, data, isSuccess, mutateAsync } = useLogin();
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [showRedefinirSenha, setShowRedefinirSenha] = useState(false);
     // const [showExtraFields, setShowExtraFields] = useState(false);
     const [formData, setFormData] = useState<LoginRequest>({
         email: "",
@@ -61,64 +63,81 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
             Cookies.set('token', token, { expires: 7 });
             onClose();
         } catch (error: any) {
-            console.error("Erro ao logar:", error);
-    
+            setShowRedefinirSenha(true);
             if (error.message) {
-                setErrorMessage(error.message); // Exibe a mensagem vinda do backend
+                if (error.message.includes("Failed to fetch")) {
+                    setErrorMessage("Falha ao conectar-se ao servidor. Verifique sua conexão com a internet e tente novamente mais tarde.");
+                } else {
+                    setErrorMessage(error.message);
+                }     
             } else {
-                setErrorMessage("Erro ao conectar ao servidor");
-            }
+            setErrorMessage("Ocorreu um erro inesperado. Tente novamente.");
         }
-    };
+    }
+};
 
-    return (
-        <Dialog open={true} onOpenChange={(open) => !open && onClose()}>
-            <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                    <DialogTitle className="text-2xl font-bold">Entrar</DialogTitle>
-                    {/* <DialogDescription>
+return (
+    <Dialog open={true} onOpenChange={(open) => !open && onClose()}>
+        <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+                <DialogTitle className="text-2xl font-bold">Entrar</DialogTitle>
+                {/* <DialogDescription>
                         Cadastre-se agora e explore o fascinante universo da fotografia!
                     </DialogDescription> */}
-                </DialogHeader>
-                <div className="bg-white w-full relative mt-2">
-                    {/* <h2 className="text-2xl font-bold mb-6">Bem-vindo(a) ao BrasilShots</h2> */}
-                    <form className="flex flex-col" onSubmit={handleSubmit}>
-                        <div className="mb-4">
-                            <label htmlFor="email" className="block text-sm font-medium">E-mail</label>
-                            <input
-                                type="email"
-                                id="email"
-                                value={formData.email}
-                                onChange={handleInputChange}
-                                className="mt-1 p-2 border border-gray-300 rounded w-full"
-                                placeholder="Digite seu e-mail"
-                                required
-                            />
+            </DialogHeader>
+            <div className="bg-white w-full relative mt-2">
+                {/* <h2 className="text-2xl font-bold mb-6">Bem-vindo(a) ao BrasilShots</h2> */}
+                <form className="flex flex-col" onSubmit={handleSubmit}>
+                    <div className="mb-4">
+                        <label htmlFor="email" className="block text-sm font-medium">E-mail</label>
+                        <input
+                            type="email"
+                            id="email"
+                            value={formData.email}
+                            onChange={handleInputChange}
+                            className="mt-1 p-2 border border-gray-300 rounded w-full"
+                            placeholder="Digite seu e-mail"
+                            required
+                        />
+                    </div>
+                    <div className="mb-4">
+                        <label htmlFor="password" className="block text-sm font-medium">Senha</label>
+                        <input
+                            type="password"
+                            id="password"
+                            value={formData.password}
+                            onChange={handleInputChange}
+                            className="mt-1 p-2 border border-gray-300 rounded w-full"
+                            placeholder="Digite sua senha"
+                            required
+                        />
+                    </div>
+                    {errorMessage && <p className="text-red-500 font-medium text-xs mb-2">{errorMessage}</p>}
+                    <button
+                        type="submit"
+                        className="text-white font-medium bg-black hover:bg-opacity-90 px-4 py-2 rounded-md mt-2 flex items-center gap-2 justify-center"
+                    >
+                        Fazer login
+                    </button>
+                    {showRedefinirSenha && (
+                        <div className="flex text-xs font-medium gap-2 justify-center mt-4">
+                            <p>Esqueceu a senha?</p>
+                            <button className="underline text-blue-500 select-none"
+
+                            >Redefinir senha</button>
                         </div>
-                        <div className="mb-4">
-                            <label htmlFor="password" className="block text-sm font-medium">Senha</label>
-                            <input
-                                type="password"
-                                id="password"
-                                value={formData.password}
-                                onChange={handleInputChange}
-                                className="mt-1 p-2 border border-gray-300 rounded w-full"
-                                placeholder="Digite sua senha"
-                                required
-                            />
-                        </div>
-                        {errorMessage && <p className="text-red-500 font-medium text-sm mb-2">{errorMessage}</p>}
-                        <button
-                            type="submit"
-                            className="text-white font-medium bg-black hover:bg-opacity-90 px-4 py-2 rounded-md mt-2 flex items-center gap-2 justify-center"
-                        >
-                            Fazer login
-                        </button>
-                    </form>
-                </div>
-            </DialogContent>
-        </Dialog>
-    );
+                    )}
+                    <div className="flex text-xs font-medium gap-2 justify-center mt-4">
+                        <p>Ainda não tem uma conta?</p>
+                        <button className="underline text-blue-500 select-none"
+                            onClick={openCadastro}
+                        >Cadastre-se</button>
+                    </div>
+                </form>
+            </div>
+        </DialogContent>
+    </Dialog>
+);
 };
 
 export default LoginModal;

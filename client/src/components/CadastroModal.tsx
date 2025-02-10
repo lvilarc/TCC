@@ -19,9 +19,10 @@ import {
 
 interface CadastroModalProps {
     onClose: () => void;
+    openLogin: () => void;
 }
 
-const CadastroModal: React.FC<CadastroModalProps> = ({ onClose }) => {
+const CadastroModal: React.FC<CadastroModalProps> = ({ onClose, openLogin }) => {
     const { setUserFromToken } = useAuthContext();
     const { isPending, data, isSuccess, mutateAsync } = useSignUp();
     const [showExtraFields, setShowExtraFields] = useState(false);
@@ -151,7 +152,9 @@ const CadastroModal: React.FC<CadastroModalProps> = ({ onClose }) => {
                                 </button>
                                 <div className="flex text-xs font-medium gap-2 justify-center mt-4">
                                     <p>Já tem uma conta?</p>
-                                    <button className="underline text-blue-500 select-none">Fazer login</button>
+                                    <button className="underline text-blue-500 select-none"
+                                    onClick={openLogin}
+                                    >Fazer login</button>
                                 </div>
                             </div>
                         ) : (

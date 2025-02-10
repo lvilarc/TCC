@@ -29,7 +29,7 @@ export function useLogin() {
     const { mutate, isPending, isError, isSuccess, data, error, mutateAsync } = useMutation({
         mutationFn: login,
         onError: (error) => {
-            console.error("Erro ao logar:", error);
+            // console.error("Erro ao logar:", error);
         },
         onSuccess: (data) => {
             // const { token } = data;
