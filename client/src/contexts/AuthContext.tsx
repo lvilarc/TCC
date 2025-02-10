@@ -54,7 +54,7 @@ export function AuthContextProvider({ children }: ProviderProps) {
             const payload: JwtPayload = jwtDecode(token);
             setUser({
                 id: payload.sub,
-                email: payload.email,
+                name: payload.name,
                 username: payload.username,
             });
             // setIsTokenVerified(true);

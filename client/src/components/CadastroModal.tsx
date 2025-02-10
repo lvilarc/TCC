@@ -7,6 +7,15 @@ import { useAuthContext } from "@/hooks/AuthContext/useAuthContext";
 import { User } from "@/types/User";
 import { JwtPayload } from "@/types/JwtPayload";
 import Cookies from 'js-cookie';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
 
 interface CadastroModalProps {
     onClose: () => void;
@@ -56,96 +65,107 @@ const CadastroModal: React.FC<CadastroModalProps> = ({ onClose }) => {
     };
 
     return (
-        <div className="fixed inset-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-50">
-            <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md relative">
-                <button className="absolute top-4 right-4 text-gray-500 hover:text-black" onClick={onClose}>
-                    <CloseIcon />
-                </button>
+        <Dialog open={true} onOpenChange={(open) => !open && onClose()}>
+            <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                    <DialogTitle className="text-2xl font-bold">Bem-vindo(a) ao BrasilShots</DialogTitle>
+                    <DialogDescription>
+                        Cadastre-se agora e explore o fascinante universo da fotografia!
+                    </DialogDescription>
+                </DialogHeader>
+                <div className="bg-white w-full relative mt-2">
+                    {/* <h2 className="text-2xl font-bold mb-6">Bem-vindo(a) ao BrasilShots</h2> */}
+                    <form className="flex flex-col" onSubmit={(e) => {
+                        if (!showExtraFields) {
+                            e.preventDefault();
+                            handleNextStep();
+                        } else {
+                            handleSubmit(e)
+                        }
+                    }}>
+                        <div className="mb-4">
+                            <label htmlFor="email" className="block text-sm font-medium">E-mail</label>
+                            <input
+                                type="email"
+                                id="email"
+                                value={formData.email}
+                                onChange={handleInputChange}
+                                className="mt-1 p-2 border border-gray-300 rounded w-full"
+                                placeholder="Digite seu e-mail"
+                                required
+                            />
+                        </div>
 
-                <h2 className="text-2xl font-bold mb-6">Bem-vindo(a) ao BrasilShots</h2>
-                <form className="flex flex-col" onSubmit={handleSubmit}>
-                    <div className="mb-4">
-                        <label htmlFor="email" className="block text-sm font-medium">E-mail</label>
-                        <input
-                            type="email"
-                            id="email"
-                            value={formData.email}
-                            onChange={handleInputChange}
-                            className="mt-1 p-2 border border-gray-300 rounded w-full"
-                            placeholder="Digite seu e-mail"
-                            required
-                        />
-                    </div>
-
-                    {showExtraFields && (
-                        <>
-                            <div className="mb-4">
-                                <label htmlFor="name" className="block text-sm font-medium">Nome Completo</label>
-                                <input
-                                    type="text"
-                                    id="name"
-                                    value={formData.name}
-                                    onChange={handleInputChange}
-                                    className="mt-1 p-2 border border-gray-300 rounded w-full"
-                                    placeholder="Digite seu nome completo"
-                                    required
-                                />
-                            </div>
-                            <div className="mb-4">
-                                <label htmlFor="password" className="block text-sm font-medium">Senha</label>
-                                <input
-                                    type="password"
-                                    id="password"
-                                    value={formData.password}
-                                    onChange={handleInputChange}
-                                    className="mt-1 p-2 border border-gray-300 rounded w-full"
-                                    placeholder="Crie uma senha"
-                                    required
-                                    minLength={6}
-                                />
-                            </div>
-                            <div className="mb-4">
-                                <label htmlFor="username" className="block text-sm font-medium">Nome de usuário</label>
-                                <div className="mt-1 flex items-center relative">
+                        {showExtraFields && (
+                            <>
+                                <div className="mb-4">
+                                    <label htmlFor="name" className="block text-sm font-medium">Nome Completo</label>
                                     <input
-                                        type="username"
-                                        id="username"
-                                        value={formData.username}
+                                        type="text"
+                                        id="name"
+                                        value={formData.name}
                                         onChange={handleInputChange}
-                                        className="p-2 border border-gray-300 rounded w-full pl-[26px]"
+                                        className="mt-1 p-2 border border-gray-300 rounded w-full"
+                                        placeholder="Digite seu nome completo"
                                         required
                                     />
-                                    <span className="text-gray-400 absolute left-2 select-none mb-[2px]">@</span>
+                                </div>
+                                <div className="mb-4">
+                                    <label htmlFor="password" className="block text-sm font-medium">Senha</label>
+                                    <input
+                                        type="password"
+                                        id="password"
+                                        value={formData.password}
+                                        onChange={handleInputChange}
+                                        className="mt-1 p-2 border border-gray-300 rounded w-full"
+                                        placeholder="Crie uma senha"
+                                        required
+                                        minLength={6}
+                                    />
+                                </div>
+                                <div className="mb-4">
+                                    <label htmlFor="username" className="block text-sm font-medium">Nome de usuário</label>
+                                    <div className="mt-1 flex items-center relative">
+                                        <input
+                                            type="username"
+                                            id="username"
+                                            value={formData.username}
+                                            onChange={handleInputChange}
+                                            className="p-2 border border-gray-300 rounded w-full pl-[26px]"
+                                            required
+                                        />
+                                        <span className="text-gray-400 absolute left-2 select-none mb-[2px]">@</span>
+                                    </div>
+                                </div>
+                            </>
+                        )}
+
+                        {!showExtraFields ? (
+                            <div className="flex flex-col">
+                                <button
+                                    type="button"
+                                    className="text-white font-medium select-none bg-black hover:bg-opacity-90 px-4 py-2 rounded-md mt-2 flex items-center gap-2 justify-center"
+                                    onClick={handleNextStep}
+                                >
+                                    Próximo <ArrowLongRightIcon />
+                                </button>
+                                <div className="flex text-xs font-medium gap-2 justify-center mt-4">
+                                    <p>Já tem uma conta?</p>
+                                    <button className="underline text-blue-500 select-none">Fazer login</button>
                                 </div>
                             </div>
-                        </>
-                    )}
-
-                    {!showExtraFields ? (
-                        <div className="flex flex-col">
+                        ) : (
                             <button
-                                type="button"
+                                type="submit"
                                 className="text-white font-medium bg-black hover:bg-opacity-90 px-4 py-2 rounded-md mt-2 flex items-center gap-2 justify-center"
-                                onClick={handleNextStep}
                             >
-                                Próximo <ArrowLongRightIcon />
+                                Criar Conta
                             </button>
-                            <div className="flex text-xs font-medium gap-2 justify-center mt-4">
-                                <p>Já tem uma conta?</p>
-                                <button className="underline text-blue-500">Fazer login</button>
-                            </div>
-                        </div>
-                    ) : (
-                        <button
-                            type="submit"
-                            className="text-white font-medium bg-black hover:bg-opacity-90 px-4 py-2 rounded-md mt-2 flex items-center gap-2 justify-center"
-                        >
-                            Criar Conta
-                        </button>
-                    )}
-                </form>
-            </div>
-        </div>
+                        )}
+                    </form>
+                </div>
+            </DialogContent>
+        </Dialog>
     );
 };
 

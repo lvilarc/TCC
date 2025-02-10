@@ -35,7 +35,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${montserrat.variable} custom-scrollbar antialiased`}
+        className={`${montserrat.variable} antialiased`}
       >
         <ClientProvider>
           <AuthContextProvider>

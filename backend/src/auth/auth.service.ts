@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException  } from '@nestjs/common';
 import { SignUpRequest } from './dto/signup-request.dto';
 import { UsersService } from '../users/users.service';
 import { PasswordService } from './password/password.service';
@@ -51,14 +51,14 @@ export class AuthService {
     async login(loginData: LoginRequest) {
         const user = await this.usersService.findUserByEmail(loginData.email)
         if (!user) {
-            throw new Error('Usuário não encontrado');
+            throw new UnauthorizedException('Credenciais inválidas. Verifique seu e-mail e senha e tente novamente.');
         }
         const isPasswordValid = await this.passwordService.comparePasswords(
             loginData.password,
             user.passwordHash,
         );
         if (!isPasswordValid) {
-            throw new Error('Senha inválida');
+            throw new UnauthorizedException('Credenciais inválidas. Verifique seu e-mail e senha e tente novamente.');
         }
         const token = await this.generateToken(user)
 
