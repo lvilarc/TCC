@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { CloseIcon } from "./icons/CloseIcon";
 import { ArrowLongRightIcon } from "./icons/ArrowRightIcon";
-import { SignUpRequest, useSignUp } from "@/hooks/useSignUp";
+import { SignUpRequest, useSignUp } from "@/hooks/Auth/useSignUp";
 import { jwtDecode } from "jwt-decode";
 import { useAuthContext } from "@/hooks/AuthContext/useAuthContext";
 import { User } from "@/types/User";
@@ -16,7 +16,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import { LoginRequest, useLogin } from "@/hooks/useLogin";
+import { LoginRequest, useLogin } from "@/hooks/Auth/useLogin";
 
 interface LoginModalProps {
     onClose: () => void;

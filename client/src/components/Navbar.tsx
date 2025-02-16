@@ -41,7 +41,7 @@ export default function Navbar() {
                     }, 100);
                 }} />
             )}
-            <nav className="bg-white text-stone-800 py-4 flex justify-between px-10 lg:px-40 items-center fixed top-0 left-0 w-full border-b">
+            <nav className="bg-white text-stone-800 py-4 flex justify-between px-10 lg:px-40 items-center fixed top-0 left-0 w-full border-b shadow-md z-50">
                 <div className="flex items-center">
                     <Link href="/">
                         <div className="flex items-center gap-2">
@@ -53,6 +53,11 @@ export default function Navbar() {
                         <li>
                             <Link href="/" className="hover:text-stone-400">
                                 Home
+                            </Link>
+                        </li>
+                        <li>
+                            <Link href="/torneios" className="hover:text-stone-400">
+                                Torneios
                             </Link>
                         </li>
                         <li>

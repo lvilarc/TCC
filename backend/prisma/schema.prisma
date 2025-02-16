@@ -7,14 +7,44 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Rank {
+  OBSERVADOR_INICIANTE    // Níveis 0-4
+  EXPLORADOR_DE_LENTES    // Níveis 5-9
+  ARTISTA_DA_LUZ         // Níveis 10-14
+  NARRADOR_VISUAL        // Níveis 15-19
+  MESTRE_DA_COMPOSICAO   // Níveis 20-24
+  LENDARIO_DA_FOTOGRAFIA // Níveis 25-30
+}
+
 model User {
   id           Int      @id @default(autoincrement())
   username     String   @unique
   email        String   @unique
   name         String
   passwordHash String
+  xp           Int       @default(0)
+  level        Int       @default(1)
+  rank         Rank      @default(OBSERVADOR_INICIANTE)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
+  createdTournaments Tournament[]
+
   @@map("users")
+}
+
+model Tournament {
+  id              Int       @id @default(autoincrement())
+  title           String    // Título do torneio (Ex: "Arte Urbana")
+  description     String    // Descrição do torneio
+  startDate       DateTime  // Data de início do torneio
+  endDate         DateTime  // Data de término do torneio
+  maxPhotos       Int       // Número máximo de fotos que cada usuário pode enviar
+  createdBy       Int       // ID do usuário que criou o torneio (User.id)
+  createdAt       DateTime  @default(now()) // Data de criação do torneio
+  updatedAt       DateTime  @updatedAt       // Data de atualização do torneio
+
+  creator         User      @relation(fields: [createdBy], references: [id])
+
+  @@map("tournaments")
 }
