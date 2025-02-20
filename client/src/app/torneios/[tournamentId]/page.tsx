@@ -1,9 +1,10 @@
 "use client"
 
+import JoinTournamentModal from "@/components/Tournaments/JoinTournamentModal";
 import VoteModal from "@/components/VoteModal";
 import { useState } from "react";
 
-export default function Championship() {
+export default function TournamentPage() {
   const jogo = {
     id: 1,
     title: "Arte Urbana",
@@ -12,9 +13,14 @@ export default function Championship() {
   };
 
   const [open, setOpen] = useState(false);
+  const [joinTournamentModal, setJoinTournamentModal] = useState(false);
+
 
   return (
     <>
+      {joinTournamentModal && (
+        <JoinTournamentModal onClose={() => setJoinTournamentModal(false)} />
+      )}
       {open && <VoteModal open={open} setOpen={setOpen} />}
       <div className="w-full h-full">
         <div className=" flex flex-col gap-6 items-center justify-center">
@@ -40,7 +46,9 @@ export default function Championship() {
             >
               Votar
             </button>
-            <button className="w-1/4 p-2 bg-black text-white rounded-md">
+            <button className="w-1/4 p-2 bg-black text-white rounded-md"
+              onClick={() => setJoinTournamentModal(true)}
+            >
               Participar
             </button>
           </div>
