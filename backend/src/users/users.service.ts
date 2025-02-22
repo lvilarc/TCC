@@ -5,9 +5,7 @@ import { User } from '@prisma/client';
 
 @Injectable()
 export class UsersService {
-  constructor(
-    private prisma: PrismaService,
-  ) { }
+  constructor(private prisma: PrismaService) {}
 
   async createUser(signUpData: SignUpRequest) {
     const user = await this.prisma.user.create({
