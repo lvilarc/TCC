@@ -19,11 +19,11 @@ interface Tournament {
 }
 
 const phaseNames: Record<Tournament['phase'], string> = {
-  1: 'Início em breve ⌛',
-  2: 'Aberto 📷',
-  3: 'Votação 1/2 🔥',
-  4: 'Votação 2/2 🔥🔥',
-  5: 'Encerrado ❌',
+  1: 'Início em breve',
+  2: 'Aberto',
+  3: 'Votação Etapa 1',
+  4: 'Votação Etapa 2',
+  5: 'Encerrado',
 };
 
 const phaseColors: Record<Tournament['phase'], string> = {
@@ -52,7 +52,7 @@ export default function TournamentCard({ tournament }: TournamentCardProps) {
           /> */}
         </div>
         {tournament.phase === 3 || tournament.phase === 4 ? (
-          <div className="absolute right-2 top-0 w-[120px] z-20">
+          <div className="absolute right-2 top-2 w-[140px] z-20">
             <VoteAgoraIcon />
           </div>
         ) : null}
@@ -76,7 +76,7 @@ export default function TournamentCard({ tournament }: TournamentCardProps) {
             <span className="text-xs font-medium">fotos</span>
           </div>
           <div className={`flex-grow text-white text-base flex justify-center items-center uppercase font-semibold text-center `}>
-            <span className={`${phaseColors[tournament.phase]} py-2 rounded px-3 flex justify-center items-center text-sm`}> {phaseNames[tournament.phase]}</span>
+            <span className={`${phaseColors[tournament.phase]} py-1.5 rounded px-4 flex justify-center items-center text-sm`}> {phaseNames[tournament.phase]}</span>
           </div>
           <div className="flex flex-col items-center justify-center font-semibold px-4">
             <span>10.000</span>
@@ -84,8 +84,8 @@ export default function TournamentCard({ tournament }: TournamentCardProps) {
           </div>
         </div>
         {/* Descrição */}
-        <div className="p-4 bg-stone-50 text-stone-800">
-          <p className="text-sm font-medium">{tournament.description}</p>
+        {/* <div className="p-4 bg-stone-50 text-stone-800"> */}
+          {/* <p className="text-sm font-medium">{tournament.description}</p> */}
           {/* <div className="mt-2 text-sm text-gray-600">
             <p><strong>Votação 1/2:</strong> {new Date(tournament.startDate).toLocaleDateString()} até { new Date(tournament.midDate).toLocaleDateString() }</p>
             <p><strong>Votação 2/2:</strong> { new Date(tournament.midDate).toLocaleDateString() } até {new Date(tournament.endDate).toLocaleDateString()}</p>
@@ -93,7 +93,7 @@ export default function TournamentCard({ tournament }: TournamentCardProps) {
             <p><strong>Máximo de Fotos:</strong> {tournament.maxPhotos}</p>
 
           </div> */}
-        </div>
+        {/* </div> */}
       </div>
     </Link>
   );

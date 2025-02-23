@@ -13,27 +13,57 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { useAuthContext } from "@/hooks/AuthContext/useAuthContext";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Skeleton } from "@/components/ui/skeleton";
 
 
 
 
-const options = [
-    "Minhas participações",
-    "Todos",
-    "Início em breve",
-    "Abertos",
-    "Votação - Etapa 1",
-    "Votação - Etapa 2",
-    "Encerrados"
+const filterOptions = [
+    { label: "Minhas participações", value: "myParticipations" },
+    { label: "Todos", value: "all" },
+    { label: "Início em breve", value: "upcoming" },
+    { label: "Abertos", value: "open" },
+    { label: "Votação", value: "voting" },
+    { label: "Encerrados", value: "closed" }
 ];
 
 export default function TournamentsPage() {
-    const [selected, setSelected] = useState(options[0]);
-    const { data, isLoading, isError } = useTournaments();
+    const { user } = useAuthContext();
+    const router = useRouter();
+    const searchParams = useSearchParams();
+
+    const filteredFilterOptions = user
+        ? filterOptions
+        : filterOptions.filter(option => option.value !== "myParticipations");
+
+    const filterFromUrl = searchParams.get('filter') || 'all';
+    let validatedFilter = filterOptions.some(opt => opt.value === filterFromUrl) ? filterFromUrl : 'all';
+
+    useEffect(() => {
+        if (!user && validatedFilter === 'myParticipations') {
+            const newParams = new URLSearchParams();
+            newParams.set('filter', 'all'); // Define 'all' como padrão
+
+            router.replace(`?${newParams.toString()}`);
+        }
+    }, [user, validatedFilter, router]);
+
+    const initialFilter = filterOptions.find(opt => opt.value === validatedFilter) || filterOptions[1];
+    const [selected, setSelected] = useState(initialFilter);
+    const { data, isLoading, isError } = useTournaments({ filter: selected.value });
     const [createTournamentModal, setCreateTournamentModal] = useState(false);
-    if (isLoading) {
-        return <div>Carregando torneios...</div>;
-    }
+
+    useEffect(() => {
+        if (selected.value !== validatedFilter) {
+            const newParams = new URLSearchParams();
+            newParams.set('filter', selected.value);
+            router.replace(`?${newParams.toString()}`);
+        }
+    }, [selected, router]);
+
+
 
     if (isError) {
         return <div>Erro ao carregar torneios</div>;
@@ -51,32 +81,40 @@ export default function TournamentsPage() {
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <div id="dropdown-trigger" className="text-white flex items-center border-stone-400 font-semibold cursor-default gap-1 border pl-5 pr-3 py-1 rounded-md ">
-                                    {selected} <ChevronDown />
+                                    {selected.label} <ChevronDown />
                                 </div>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" style={{ minWidth: document.getElementById("dropdown-trigger")?.offsetWidth }}>
                                 <DropdownMenuGroup>
-                                    {options.map((option) => (
+                                    {filteredFilterOptions.map((option) => (
                                         <DropdownMenuItem
-                                            key={option}
+                                            key={option.label}
                                             onClick={() => setSelected(option)}
-                                            className={`flex items-center justify-between ${selected === option ? "bg-stone-200" : "hover:bg-stone-200"} transition-colors`}
+                                            className={`flex items-center justify-between ${selected.label === option.label ? "bg-stone-200" : "hover:bg-stone-200"} transition-colors`}
                                         >
-                                            {option}
-                                            {selected === option && <CheckIcon className="w-4 h-4 text-black" />}
+                                            {option.label}
+                                            {selected.label === option.label && <CheckIcon className="w-4 h-4 text-black" />}
                                         </DropdownMenuItem>
                                     ))}
                                 </DropdownMenuGroup>
                             </DropdownMenuContent>
                         </DropdownMenu>
-                        <button className="fixed right-4 text-white bg-black bg-opacity-50 rounded-full p-2"
-                            onClick={() => setCreateTournamentModal(true)}
-                        ><PlusIcon /></button>
+                        {user ? (
+                            <button className="fixed right-4 text-white bg-black bg-opacity-50 rounded-full p-2"
+                                onClick={() => setCreateTournamentModal(true)}
+                            ><PlusIcon /></button>
+                        ) : null}
                     </div>
 
                 </div>
                 <div className="w-full flex justify-center mt-20">
-                    {data?.length > 0 ? (
+                    {isLoading ? (
+                        <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-6">
+                            {Array.from({ length: 6 }).map((_, index) => (
+                                <Skeleton key={index} className="h-[310px] w-[490px] rounded-none" />
+                            ))}
+                        </div>
+                    ) : data?.length > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-6">
                             {data.map((tournament: any) => (
                                 <TournamentCard key={tournament.id} tournament={tournament} />
@@ -86,6 +124,7 @@ export default function TournamentsPage() {
                         <div>Não há torneios disponíveis.</div>
                     )}
                 </div>
+
             </div>
         </>
     );

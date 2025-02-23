@@ -12,7 +12,9 @@ export class JwtAuthGuard implements CanActivate {
     const authHeader = request.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      throw new UnauthorizedException('Token não encontrado.');
+      request.user = null;
+      return true;
+      // throw new UnauthorizedException('Token não encontrado.');
     }
 
     const token = authHeader.split(' ')[1];
@@ -29,7 +31,9 @@ export class JwtAuthGuard implements CanActivate {
       request.user = user; // Adiciona o usuário ao request
       return true;
     } catch (error) {
-      throw new UnauthorizedException('Token inválido ou expirado.');
+      request.user = null;
+      return true;
+      // throw new UnauthorizedException('Token inválido ou expirado.');
     }
   }
 }

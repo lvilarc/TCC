@@ -115,7 +115,7 @@ export default function Navbar() {
                                 setLoginModalOpen(true);
                             }}
                         >Entrar</button>
-                        <button className="px-5 py-2 bg-stone-800 rounded-full text-white"
+                        <button className="px-5 py-2 bg-stone-800 rounded-full text-white whitespace-nowrap"
                             onClick={() => {
                                 setCadastroModalOpen(true);
                             }}
