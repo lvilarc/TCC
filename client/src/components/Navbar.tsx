@@ -15,10 +15,18 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import LoginModal from './LoginModal';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+
+const menuItems = [
+    { name: "Home", path: "/home" },
+    { name: "Torneios", path: "/torneios" },
+    { name: "Sobre", path: "/sobre" },
+    { name: "Contato", path: "/contato" }
+];
 
 export default function Navbar() {
     const router = useRouter();
+    const pathname = usePathname();
     const { user } = useAuthContext();
     const [cadastroModalOpen, setCadastroModalOpen] = useState(false);
     const [loginModalOpen, setLoginModalOpen] = useState(false);
@@ -41,35 +49,30 @@ export default function Navbar() {
                     }, 100);
                 }} />
             )}
-            <nav className="bg-white text-stone-800 py-4 flex justify-between px-10 lg:px-40 items-center fixed top-0 left-0 w-full border-b shadow-md z-50">
-                <div className="flex items-center">
+            <nav className="bg-white text-stone-800 h-[69px] flex justify-between px-10 lg:px-40 items-center fixed top-0 left-0 w-full border-b shadow-md z-50">
+                <div className="flex items-center h-full">
                     <Link href="/">
                         <div className="flex items-center gap-2">
                             <div className="w-6 h-6 rounded-full bg-stone-800" />
                             <span className="text-xl font-semibold">BrasilShots</span>
                         </div>
                     </Link>
-                    <ul className="flex space-x-4 ml-20">
-                        <li>
-                            <Link href="/" className="hover:text-stone-400">
-                                Home
-                            </Link>
-                        </li>
-                        <li>
-                            <Link href="/torneios" className="hover:text-stone-400">
-                                Torneios
-                            </Link>
-                        </li>
-                        <li>
-                            <Link href="/about" className="hover:text-stone-400">
-                                Sobre
-                            </Link>
-                        </li>
-                        <li>
-                            <Link href="/contact" className="hover:text-stone-400">
-                                Contato
-                            </Link>
-                        </li>
+                    <ul className="flex ml-20 h-full items-center">
+                        {menuItems.map(({ name, path }) => {
+                            const isActive = pathname === path || (path === "/torneios" && pathname.startsWith("/torneios"));
+
+                            return (
+                                <li key={path} className="h-full">
+                                    <Link
+                                        href={path}
+                                        className={`px-5 h-full flex items-center   ${isActive ? "bg-stone-100 font-medium text-stone-800" : "text-stone-600 hover:text-stone-800"
+                                            }`}
+                                    >
+                                        {name}
+                                    </Link>
+                                </li>
+                            );
+                        })}
                     </ul>
                 </div>
                 {user ? (
@@ -85,7 +88,7 @@ export default function Navbar() {
                             </DropdownMenuTrigger>
                             <DropdownMenuContent className="w-auto">
                                 <DropdownMenuGroup>
-                                    <DropdownMenuItem onClick={()=>{
+                                    <DropdownMenuItem onClick={() => {
                                         router.push(`/perfil/${user.username}`)
                                     }}>
                                         Meu perfil
