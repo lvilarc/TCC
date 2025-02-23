@@ -11,7 +11,7 @@ const nextConfig: NextConfig = {
     ];
   },
   images: {
-    domains: ['d3h1lg3ksw6i6b.cloudfront.net'],
+    domains: ['lvilarc-tcc-bucket.s3.us-east-2.amazonaws.com',],
   },
 };
 

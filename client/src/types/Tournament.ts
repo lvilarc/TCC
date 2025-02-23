@@ -4,6 +4,7 @@ export type Tournament = {
   description: string;
   startDate: string;
   endDate: string;
-  maxPhotos: number;
+  // maxPhotos: number;
   createdBy: number;
+  bannerUrl: string;
 };

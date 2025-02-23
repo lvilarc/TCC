@@ -8,11 +8,11 @@ datasource db {
 }
 
 enum Rank {
-  OBSERVADOR_INICIANTE    // Níveis 0-4
-  EXPLORADOR_DE_LENTES    // Níveis 5-9
-  ARTISTA_DA_LUZ         // Níveis 10-14
-  NARRADOR_VISUAL        // Níveis 15-19
-  MESTRE_DA_COMPOSICAO   // Níveis 20-24
+  OBSERVADOR_INICIANTE // Níveis 0-4
+  EXPLORADOR_DE_LENTES // Níveis 5-9
+  ARTISTA_DA_LUZ // Níveis 10-14
+  NARRADOR_VISUAL // Níveis 15-19
+  MESTRE_DA_COMPOSICAO // Níveis 20-24
   LENDARIO_DA_FOTOGRAFIA // Níveis 25-30
 }
 
@@ -22,29 +22,78 @@ model User {
   email        String   @unique
   name         String
   passwordHash String
-  xp           Int       @default(0)
-  level        Int       @default(1)
-  rank         Rank      @default(OBSERVADOR_INICIANTE)
+  xp           Int      @default(0)
+  level        Int      @default(1)
+  rank         Rank     @default(OBSERVADOR_INICIANTE)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  createdTournaments Tournament[]
+  createdTournaments Tournament[] // Torneios criados pelo usuário
+  photos             Photo[] // Fotos enviadas pelo usuário
+  participations     Participation[] // Participações do usuário em torneios
 
   @@map("users")
 }
 
 model Tournament {
-  id              Int       @id @default(autoincrement())
-  title           String    // Título do torneio (Ex: "Arte Urbana")
-  description     String    // Descrição do torneio
-  startDate       DateTime  // Data de início do torneio
-  endDate         DateTime  // Data de término do torneio
-  maxPhotos       Int       // Número máximo de fotos que cada usuário pode enviar
-  createdBy       Int       // ID do usuário que criou o torneio (User.id)
-  createdAt       DateTime  @default(now()) // Data de criação do torneio
-  updatedAt       DateTime  @updatedAt       // Data de atualização do torneio
+  id          Int      @id @default(autoincrement())
+  title       String // Título do torneio (Ex: "Arte Urbana")
+  description String // Descrição do torneio
+  startDate   DateTime // Data de início do torneio
+  endDate     DateTime // Data de término do torneio
+  bannerId    Int      @unique // Banner do torneio, cada torneio tem um único banner
+  // maxPhotos       Int       // Número máximo de fotos que cada usuário pode enviar
+  createdBy   Int // ID do usuário que criou o torneio (User.id)
+  createdAt   DateTime @default(now()) // Data de criação do torneio
+  updatedAt   DateTime @updatedAt // Data de atualização do torneio
 
-  creator         User      @relation(fields: [createdBy], references: [id])
+  creator        User            @relation(fields: [createdBy], references: [id])
+  participations Participation[] // Lista de participações do torneio
+  banner         Photo           @relation(fields: [bannerId], references: [id])
 
   @@map("tournaments")
+}
+
+enum PhotoType {
+  PROFILE_AVATAR // Foto de perfil
+  PROFILE_PHOTO // Fotos no perfil do usuário (fora de torneios)
+  TOURNAMENT_BANNER // Banner do Torneio
+  TOURNAMENT_PARTICIPATION // Foto para participar de um torneio
+  OTHER
+}
+
+model Photo {
+  id        Int       @id @default(autoincrement()) // ID da foto
+  userId    Int // ID do usuário que enviou a foto
+  key       String // Key do arquivo no S3 (identificador único do arquivo no bucket)
+  url       String // URL da foto (armazenada no S3, por exemplo)
+  type      PhotoType // Tipo da foto
+  createdAt DateTime  @default(now()) // Data de criação da foto
+  updatedAt DateTime  @updatedAt // Data de atualização da foto
+
+  user User @relation(fields: [userId], references: [id])
+
+  // Relacionamento com a participação no torneio (opcional)
+  participations Participation[]
+
+  tournament Tournament? @relation
+
+  @@map("photos")
+}
+
+model Participation {
+  id           Int      @id @default(autoincrement()) // ID da participação
+  userId       Int // ID do usuário
+  tournamentId Int // ID do torneio
+  photoId      Int // Foto enviada para o torneio
+  title        String? // Título da foto (pode ser null)
+  location     String? // Localização da foto (pode ser null)
+  createdAt    DateTime @default(now()) // Data de criação
+
+  user       User       @relation(fields: [userId], references: [id])
+  tournament Tournament @relation(fields: [tournamentId], references: [id])
+  photo      Photo      @relation(fields: [photoId], references: [id])
+
+  @@unique([userId, tournamentId])
+  @@map("participations")
 }

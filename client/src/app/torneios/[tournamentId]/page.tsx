@@ -1,8 +1,11 @@
-"use client"
+"use client";
 
-import JoinTournamentModal from "@/components/Tournaments/JoinTournamentModal";
 import VoteModal from "@/components/VoteModal";
+import { useTournament } from "@/hooks/Tournaments/useTournament";
 import { useState } from "react";
+import { useParams } from "next/navigation";
+import JoinTournamentModal from "@/components/Tournaments/JoinTournamentModal";
+import Image from "next/image";
 
 export default function TournamentPage() {
   const jogo = {
@@ -15,30 +18,36 @@ export default function TournamentPage() {
   const [open, setOpen] = useState(false);
   const [joinTournamentModal, setJoinTournamentModal] = useState(false);
 
+  const { tournamentId } = useParams();
+
+  const { data, isLoading, isError } = useTournament(Number(tournamentId));
+
+  if (isLoading) {
+    return <div>Carregando torneios...</div>;
+  }
+
+  if (isError) {
+    return <div>Erro ao carregar torneios</div>;
+  }
 
   return (
     <>
       {joinTournamentModal && (
-        <JoinTournamentModal onClose={() => setJoinTournamentModal(false)} />
+        <JoinTournamentModal onClose={() => setJoinTournamentModal(false)} tournamentId={Number(tournamentId)} />
       )}
       {open && <VoteModal open={open} setOpen={setOpen} />}
       <div className="w-full h-full">
         <div className=" flex flex-col gap-6 items-center justify-center">
-          <p className="text-3xl font-bold">{jogo.title}</p>
-          <div className="w-1/2 h-1/3 bg-gray-200">
-            <img src={jogo.imageSrc} alt={jogo.title} />
+          <p className="text-3xl font-bold">{data?.title}</p>
+          <div className="w-full max-w-[1000px] h-[500px] relative">
+            <Image
+              src={String(data?.bannerUrl)} // Coloque o caminho ou URL da sua imagem
+              layout="fill" // Preenche o espaço da div
+              objectFit="cover" // Garante que a imagem cubra o espaço sem distorcer
+              alt="Descrição da imagem"
+            />
           </div>
-          <span className="py-4 w-1/2">
-            As ruas são telas, e a cidade é a galeria a céu aberto. No tema Arte
-            Urbana, buscamos capturar a criatividade que transforma muros, becos
-            e fachadas em verdadeiras obras-primas. Grafites vibrantes, stickers
-            curiosos, lambe-lambes cheios de atitude e até intervenções
-            inesperadas – tudo vale, desde que conte uma história visual
-            impactante. Aqui, a lente vira um portal para a cultura urbana,
-            destacando cores, texturas e mensagens escondidas no concreto da
-            cidade. Enquadre, clique e mostre o que faz da arte de rua um
-            espetáculo único!
-          </span>
+          <span className="py-4 w-1/2">{data?.description}</span>
           <div className="flex flex-row w-1/2 p-2 justify-between">
             <button
               onClick={() => setOpen(true)}

@@ -5,27 +5,20 @@ import { Dialog, DialogContent, DialogTitle } from "../ui/dialog";
 import { UploadIcon } from "../icons/UploadIcon";
 import Image from "next/image";
 import { CloseIcon } from "../icons/CloseIcon";
-import { useCreateParticipation } from "@/hooks/Participation/useCreateParticipation";
 import { LoadingIcon } from "../icons/LoadingIcon";
+import { CreateTournamentRequest, useCreateTournament } from "@/hooks/Tournaments/useCreateTournament";
 
-
-interface Photo {
-    title: string;
-    file: File;
-    location: string;
-}
-
-interface JoinTournamentModalProps {
+interface CreateTournamentModalProps {
     onClose: () => void;
-    tournamentId: number;
 }
 
-export default function JoinTournamentModal({ onClose, tournamentId }: JoinTournamentModalProps) {
-    const [uploadedPhoto, setUploadedPhoto] = useState<Photo | null>(null);
+export default function CreateTournamentModal({ onClose }: CreateTournamentModalProps) {
+    const [uploadedPhoto, setUploadedPhoto] = useState<CreateTournamentRequest | null>(null);
     const [photoURL, setPhotoURL] = useState<string | null>(null);
     const [dragging, setDragging] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
-    const { mutate, mutateAsync, isPending, isError, isSuccess, data, error } = useCreateParticipation();
+    const { mutate, mutateAsync, isPending, isError, isSuccess, data, error } = useCreateTournament();
+    // const { mutate, mutateAsync, isPending, isError, isSuccess, data, error } = useCreateParticipation();
 
     const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
@@ -58,13 +51,15 @@ export default function JoinTournamentModal({ onClose, tournamentId }: JoinTourn
 
         setErrorMessage(null);
 
-        const newPhoto: Photo = {
+        const newTournament: CreateTournamentRequest = {
             file: imageFiles[0],
             title: "",
-            location: "",
+            description: "",
+            startDate: "",
+            endDate: ""
         };
 
-        setUploadedPhoto(newPhoto);
+        setUploadedPhoto(newTournament);
         setPhotoURL(URL.createObjectURL(imageFiles[0]))
     };
 
@@ -90,22 +85,32 @@ export default function JoinTournamentModal({ onClose, tournamentId }: JoinTourn
 
         setErrorMessage(null);
 
-        const newPhoto: Photo = {
+        const newTournament: CreateTournamentRequest = {
             file: imageFiles[0],
             title: "",
-            location: "",
+            description: "",
+            startDate: "",
+            endDate: ""
         };
 
-        setUploadedPhoto(newPhoto);
+        setUploadedPhoto(newTournament);
         setPhotoURL(URL.createObjectURL(imageFiles[0]))
     };
 
-    const handlePhotoTitleChange = (newName: string) => {
+    const handleTitleChange = (newName: string) => {
         setUploadedPhoto(prev => prev ? { ...prev, title: newName } : null);
     };
 
-    const handlePhotoLocationChange = (newLocation: string) => {
-        setUploadedPhoto(prev => prev ? { ...prev, location: newLocation } : null);
+    const handleStartDateChange = (newStartDate: string) => {
+        setUploadedPhoto(prev => prev ? { ...prev, startDate: newStartDate } : null);
+    };
+
+    const handleEndDateChange = (newEndDate: string) => {
+        setUploadedPhoto(prev => prev ? { ...prev, endDate: newEndDate } : null);
+    };
+
+    const handleDescriptionChange = (newDescription: string) => {
+        setUploadedPhoto(prev => prev ? { ...prev, description: newDescription } : null);
     };
 
     const handleSubmit = async () => {
@@ -113,13 +118,13 @@ export default function JoinTournamentModal({ onClose, tournamentId }: JoinTourn
             setErrorMessage("Você precisa selecionar uma foto.");
             return;
         }
-        const { title, location, file } = uploadedPhoto;
-        // if (!title || !location) {
-        //     setErrorMessage("Preencha todos os campos obrigatórios.");
-        //     return;
-        // }
+        const { title, description, endDate, startDate, file } = uploadedPhoto;
+        if (!title || !description || !endDate || !startDate) {
+            setErrorMessage("Preencha todos os campos obrigatórios.");
+            return;
+        }
         try {
-            const participationRequest = { tournamentId, title, location, file };
+            const participationRequest = { title, description, endDate, startDate, file };
             await mutateAsync(participationRequest);
             onClose();
         } catch (error: any) {
@@ -139,12 +144,12 @@ export default function JoinTournamentModal({ onClose, tournamentId }: JoinTourn
                     <UploadIcon />
                 </div>
                 <div className="flex flex-col items-center justify-center gap-2">
-                    <p className='text-stone-500 font-semibold select-none text-center text-sm lg:text-base'>Arraste e solte sua foto ou clique para selecionar</p>
+                    <p className='text-stone-500 font-semibold select-none text-center text-sm lg:text-base'>Arraste e solte uma foto para ser o BANNER do Torneio  ou clique para selecionar</p>
                     <p className='text-stone-400 font-medium select-none text-center text-xs'>(Apenas formatos JPEG ou JPG)</p>
                 </div>
                 <label htmlFor="fileInput"
                 >
-                    <p className="text-center text-sm lg:text-base mt-2 text-white font-semibold select-none cursor-pointer border border-stone-700 bg-stone-700 rounded px-5 py-1">Selecionar foto</p>
+                    <p className="text-center text-sm lg:text-base mt-2 text-white font-semibold select-none cursor-pointer border border-stone-700 bg-stone-700 rounded px-5 py-1">Selecionar BANNER</p>
                     <input
                         id="fileInput"
                         type="file"
@@ -162,7 +167,7 @@ export default function JoinTournamentModal({ onClose, tournamentId }: JoinTourn
         <Dialog open={true} onOpenChange={(open) => !open && onClose()}>
             <DialogContent className={`${uploadedPhoto === null ? 'sm:max-w-[800px] h-[60%]' : 'sm:max-w-[1200px] h-[90%]'} flex flex-col`}>
                 <DialogTitle>
-                    Participar do Torneio
+                    Criar um Torneio
                 </DialogTitle>
                 {uploadedPhoto && photoURL ? (
                     <div className="w-full h-full flex flex-col items-center">
@@ -183,24 +188,50 @@ export default function JoinTournamentModal({ onClose, tournamentId }: JoinTourn
                             ><CloseIcon /></button>
                         </div>
                         <div className="w-full pt-4">
-                            <label htmlFor="title" className="font-medium">Título da Foto</label>
-                            <input
-                                type="text"
-                                id="title"
-                                className="mt-1 p-2 border border-gray-300 rounded w-full"
-                                placeholder="(Opcional)"
-                                value={uploadedPhoto.title}
-                                onChange={(e) => handlePhotoTitleChange(e.target.value)}
-                            />
+                            <div className="mt-4 flex items-center gap-4">
+                                <div className="flex flex-col">
+                                    <label htmlFor="startDate" className="font-medium">Início</label>
+                                    <input
+                                       type="datetime-local"
+                                        id="startDate"
+                                        className="mt-1 p-2 border border-gray-300 rounded"
+                                        placeholder="Digite o título"
+                                        value={uploadedPhoto.startDate}
+                                        onChange={(e) => handleStartDateChange(e.target.value)}
+                                    />
+                                </div>
+                                <div className="flex flex-col">
+                                    <label htmlFor="endDate" className="font-medium">Fim</label>
+                                    <input
+                                       type="datetime-local"
+                                        id="endDate"
+                                        className="mt-1 p-2 border border-gray-300 rounded"
+                                        placeholder="Digite o título"
+                                        value={uploadedPhoto.endDate}
+                                        onChange={(e) => handleEndDateChange(e.target.value)}
+                                    />
+                                </div>
+                            </div>
                             <div className="mt-4">
-                                <label htmlFor="location" className="font-medium">Local da foto</label>
+                                <label htmlFor="title" className="font-medium">Título</label>
                                 <input
                                     type="text"
-                                    id="location"
+                                    id="title"
                                     className="mt-1 p-2 border border-gray-300 rounded w-full"
-                                    placeholder="(Opcional)"
-                                    value={uploadedPhoto.location}
-                                    onChange={(e) => handlePhotoLocationChange(e.target.value)}
+                                    placeholder="Digite o título"
+                                    value={uploadedPhoto.title}
+                                    onChange={(e) => handleTitleChange(e.target.value)}
+                                />
+                            </div>
+                            <div className="mt-4">
+                                <label htmlFor="location" className="font-medium">Descrição</label>
+                                <input
+                                    type="text"
+                                    id="description"
+                                    className="mt-1 p-2 border border-gray-300 rounded w-full"
+                                    placeholder="Digite a descrição"
+                                    value={uploadedPhoto.description}
+                                    onChange={(e) => handleDescriptionChange(e.target.value)}
                                 />
                             </div>
                             <div className="w-full flex justify-end mt-10">
@@ -208,7 +239,7 @@ export default function JoinTournamentModal({ onClose, tournamentId }: JoinTourn
                                     disabled={isPending}
                                     className="bg-black min-w-[250px] px-4 py-2 text-white rounded-md font-medium flex justify-center items-center"
                                     onClick={handleSubmit}
-                                >{isPending ? <LoadingIcon size={6}/> : 'Registrar participação'}</button>
+                                >{isPending ? <LoadingIcon size={6} /> : 'Criar Torneio'}</button>
                             </div>
                         </div>
                     </div>

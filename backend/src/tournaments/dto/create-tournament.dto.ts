@@ -3,5 +3,4 @@ export class CreateTournamentDto {
     description: string;
     startDate: Date;
     endDate: Date;
-    maxPhotos: number;
 }

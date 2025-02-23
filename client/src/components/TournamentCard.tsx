@@ -9,7 +9,8 @@ interface Tournament {
   description: string;
   startDate: string;
   endDate: string;
-  maxPhotos: number;
+  bannerUrl: string;
+  // maxPhotos: number;
   createdBy: number;
   createdAt: string;
   updatedAt: string;
@@ -59,7 +60,7 @@ export default function TournamentCard({ tournament }: TournamentCardProps) {
         {/* <div className="w-full h-64 bg-stone-300" /> */}
         <div className="w-full h-64 relative">
           <Image
-            src="https://d3h1lg3ksw6i6b.cloudfront.net/media/image/2024/04/04/b2223ece3cc1431985ad1ec91dff0105_Rio_de_Janeiro_situada_entre_montanhas_e_o_mar.jpg" // Coloque o caminho ou URL da sua imagem
+            src={tournament.bannerUrl} // Coloque o caminho ou URL da sua imagem
             layout="fill" // Preenche o espaço da div
             objectFit="cover" // Garante que a imagem cubra o espaço sem distorcer
             alt="Descrição da imagem"
@@ -70,7 +71,7 @@ export default function TournamentCard({ tournament }: TournamentCardProps) {
           <div className="flex flex-col items-center justify-center font-semibold bg-stone-800 text-white px-4 pt-2 pb-3 uppercase">
             <div className="flex gap-2 items-center">
               <span className="text-xs font-medium">máx</span>
-              <span className="text-xl">{tournament.maxPhotos}</span>
+              {/* <span className="text-xl">{tournament.maxPhotos}</span> */}
             </div>
             <span className="text-xs font-medium">fotos</span>
           </div>
