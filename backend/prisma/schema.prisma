@@ -97,3 +97,15 @@ model Participation {
   @@unique([userId, tournamentId])
   @@map("participations")
 }
+
+// model UserVotingProgress {
+//   id           Int      @id @default(autoincrement())
+//   userId       Int
+//   tournamentId String
+//   method       String  // 'modelo_1', 'modelo_2', 'modelo_3', 'modelo_4'
+//   phase        Int     // 1 para Fase 1, 2 para Fase 2
+//   completed    Int     // Quantas vezes já votou nesse método nesta fase
+
+//   user         User @relation(fields: [userId], references: [id])
+//   tournament   Tournament @relation(fields: [tournamentId], references: [id])
+// }
