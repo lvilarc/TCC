@@ -77,7 +77,7 @@ export default function Navbar() {
                 </div>
                 {user ? (
                     <div className="flex items-center gap-2">
-                        <Link href={`/perfil/${user.username}`}>
+                        <Link href={`/perfil/${user.id}`}>
                             <div className="whitespace-nowrap text-sm font-semibold hover:underline">@{user.username}</div>
                         </Link>
 
@@ -89,7 +89,7 @@ export default function Navbar() {
                             <DropdownMenuContent className="w-auto">
                                 <DropdownMenuGroup>
                                     <DropdownMenuItem onClick={() => {
-                                        router.push(`/perfil/${user.username}`)
+                                        router.push(`/perfil/${user.id}`)
                                     }}>
                                         Meu perfil
                                     </DropdownMenuItem>
