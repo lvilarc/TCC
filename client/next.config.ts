@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
         source: "/",
         destination: "/home",
         permanent: true, // 301 redirect permanente
+        
       },
     ];
   },
