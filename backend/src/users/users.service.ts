@@ -19,10 +19,10 @@ export class UsersService {
     return user;
   }
 
-  async findUserById(id: number): Promise<User | null> {
+  async findUserById(id: string): Promise<User | null> {
     try {
       return await this.prisma.user.findUnique({
-        where: { id },
+        where: { id: Number(id) },
       });
     } catch (error) {
       throw new Error('Erro ao buscar o usuário');

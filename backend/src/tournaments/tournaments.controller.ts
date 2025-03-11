@@ -1,4 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, UseInterceptors, UploadedFile, Req, Query, UnauthorizedException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  UseInterceptors,
+  UploadedFile,
+  Req,
+  Query,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { TournamentsService } from './tournaments.service';
 import { CreateTournamentDto } from './dto/create-tournament.dto';
 import { UpdateTournamentDto } from './dto/update-tournament.dto';
@@ -14,7 +28,7 @@ export class TournamentsController {
   constructor(
     private readonly tournamentsService: TournamentsService,
     private readonly photoService: PhotoService,
-  ) { }
+  ) {}
 
   @UseGuards(JwtAuthGuard)
   @Post()
@@ -22,10 +36,19 @@ export class TournamentsController {
   async create(
     @Body() createTournamentDto: CreateTournamentDto,
     @UploadedFile() file: Express.Multer.File,
-    @User() user: UserSchema | null) {
+    @User() user: UserSchema | null,
+  ) {
     if (user) {
-      const photo = await this.photoService.createAndUploadPhoto(file, user, PhotoType.TOURNAMENT_BANNER);
-      return this.tournamentsService.create(createTournamentDto, user, photo.id);
+      const photo = await this.photoService.createAndUploadPhoto(
+        file,
+        user,
+        PhotoType.TOURNAMENT_BANNER,
+      );
+      return this.tournamentsService.create(
+        createTournamentDto,
+        user,
+        photo.id,
+      );
     } else {
       throw new UnauthorizedException('Sem autorização.');
     }
@@ -36,7 +59,7 @@ export class TournamentsController {
   async findAll(
     @Query('filter') filter: TournamentFilter,
     @Req() req,
-    @User() user: UserSchema | null
+    @User() user: UserSchema | null,
   ) {
     const userId = user !== null ? user.id : undefined;
     return this.tournamentsService.findAll(filter, userId);
@@ -46,8 +69,6 @@ export class TournamentsController {
   public async findTournamentById(@Param('id') id: string) {
     return this.tournamentsService.findTournamentById(id);
   }
-
-  
 
   @Patch(':id')
   update(
