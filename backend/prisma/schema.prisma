@@ -36,6 +36,8 @@ model User {
   createdTournaments Tournament[] // Torneios criados pelo usuário
   photos             Photo[] // Fotos enviadas pelo usuário
   participations     Participation[] // Participações do usuário em torneios
+  votingProgress     VotingProgress[]
+  photoVotes         PhotoVote[]
 
   @@map("users")
 }
@@ -52,9 +54,11 @@ model Tournament {
   createdAt   DateTime @default(now()) // Data de criação do torneio
   updatedAt   DateTime @updatedAt // Data de atualização do torneio
 
-  creator        User            @relation(fields: [createdBy], references: [id])
+  creator        User             @relation(fields: [createdBy], references: [id])
   participations Participation[] // Lista de participações do torneio
-  banner         Photo           @relation(fields: [bannerId], references: [id])
+  banner         Photo            @relation(fields: [bannerId], references: [id])
+  votingProgress VotingProgress[]
+  photoVote      PhotoVote[]
 
   @@map("tournaments")
 }
@@ -83,6 +87,7 @@ model Photo {
   participations Participation[]
 
   tournament Tournament? @relation
+  photoVote  PhotoVote[]
 
   @@map("photos")
 }
@@ -104,14 +109,39 @@ model Participation {
   @@map("participations")
 }
 
-// model UserVotingProgress {
-//   id           Int      @id @default(autoincrement())
-//   userId       Int
-//   tournamentId String
-//   method       String  // 'modelo_1', 'modelo_2', 'modelo_3', 'modelo_4'
-//   phase        Int     // 1 para Fase 1, 2 para Fase 2
-//   completed    Int     // Quantas vezes já votou nesse método nesta fase
+enum VotingMethod {
+  TOP_THREE // Escolher 3 entre 10 fotos
+  DUEL // Batalha entre 2 fotos
+  RATING // Avaliação de 1 a 5 estrelas
+  SUPER_VOTE // Escolher 1 entre 30-40 fotos
+}
 
-//   user         User @relation(fields: [userId], references: [id])
-//   tournament   Tournament @relation(fields: [tournamentId], references: [id])
-// }
+model VotingProgress {
+  id           Int          @id @default(autoincrement())
+  userId       Int
+  tournamentId Int
+  method       VotingMethod
+  phase        Int // 1 para Fase 1, 2 para Fase 2
+  completed    Boolean      @default(false)
+
+  user       User       @relation(fields: [userId], references: [id])
+  tournament Tournament @relation(fields: [tournamentId], references: [id])
+
+  @@unique([userId, tournamentId, method, phase]) // Evita votos duplicados
+}
+
+model PhotoVote {
+  id           Int          @id @default(autoincrement())
+  userId       Int
+  photoId      Int
+  tournamentId Int
+  method       VotingMethod
+  voteScore    Int // Armazena a pontuação do voto, o valor vai depender do método
+  createdAt    DateTime     @default(now()) // Data do voto
+
+  user       User       @relation(fields: [userId], references: [id])
+  photo      Photo      @relation(fields: [photoId], references: [id])
+  tournament Tournament @relation(fields: [tournamentId], references: [id])
+
+  @@unique([userId, photoId, tournamentId, method]) // Evita duplicação de votos do mesmo usuário
+}
