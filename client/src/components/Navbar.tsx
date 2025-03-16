@@ -54,7 +54,7 @@ export default function Navbar() {
                     <Link href="/">
                         <div className="flex items-center gap-2">
                             <div className="w-6 h-6 rounded-full bg-stone-800" />
-                            <span className="text-xl font-semibold">BrasilShots</span>
+                            <span className="text-xl font-semibold">Lentes Brasileiras</span>
                         </div>
                     </Link>
                     <ul className="flex ml-20 h-full items-center">

@@ -2,10 +2,11 @@
 
 import VoteModal from "@/components/VoteModal";
 import { useTournament } from "@/hooks/Tournaments/useTournament";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import JoinTournamentModal from "@/components/Tournaments/JoinTournamentModal";
 import Image from "next/image";
+import { useStartVoting } from "@/hooks/Vote/useStartVoting";
 
 export default function TournamentPage() {
   const jogo = {
@@ -21,6 +22,11 @@ export default function TournamentPage() {
   const { tournamentId } = useParams();
 
   const { data, isLoading, isError } = useTournament(Number(tournamentId));
+  const { data: startVotingData, refetch } = useStartVoting(Number(tournamentId));
+
+  useEffect(() => {
+    console.log('startVotingData', startVotingData)
+  }, [startVotingData])
 
   if (isLoading) {
     return <div>Carregando torneios...</div>;
@@ -35,7 +41,7 @@ export default function TournamentPage() {
       {joinTournamentModal && (
         <JoinTournamentModal onClose={() => setJoinTournamentModal(false)} tournamentId={Number(tournamentId)} />
       )}
-      {open && <VoteModal open={open} setOpen={setOpen} />}
+      {open && <VoteModal onClose={() => setOpen(false)} data={startVotingData} />}
       <div className="w-full h-full">
         <div className=" flex flex-col gap-6 items-center justify-center">
           <p className="text-3xl font-bold">{data?.title}</p>
@@ -50,7 +56,8 @@ export default function TournamentPage() {
           <span className="py-4 w-1/2">{data?.description}</span>
           <div className="flex flex-row w-1/2 p-2 justify-between">
             <button
-              onClick={() => setOpen(true)}
+              // onClick={() => setOpen(true)}
+              onClick={() => { refetch(); setOpen(true); }}
               className="w-1/4 p-2 bg-black text-white rounded-md"
             >
               Votar

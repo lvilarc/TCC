@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, UnauthorizedException, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, UnauthorizedException, BadRequestException, Query } from '@nestjs/common';
 import { VoteService } from './vote.service';
 import { CreateVoteDto } from './dto/create-vote.dto';
 import { UpdateVoteDto } from './dto/update-vote.dto';
@@ -11,15 +11,20 @@ export class VoteController {
   constructor(private readonly voteService: VoteService) { }
 
   @UseGuards(JwtAuthGuard)
-  @Post('start')
-  create(
-    @Req() req,
+  @Get('start')
+  async create(
+    @Query('tournamentId') tournamentId: number,
     @User() user: UserSchema | null
   ) {
     if (!user) {
       throw new UnauthorizedException('Sem autorização.');
     }
-    return this.voteService.startVoting(user.id, req.body.tournamentId);
+  
+    if (!tournamentId) {
+      throw new BadRequestException('tournamentId é obrigatório.');
+    }
+  
+    return this.voteService.startVoting(user.id, Number(tournamentId));
   }
 
   // @Get()

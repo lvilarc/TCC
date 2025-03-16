@@ -76,13 +76,13 @@ const CadastroModal: React.FC<CadastroModalProps> = ({ onClose, openLogin }) => 
         <Dialog open={true} onOpenChange={(open) => !open && onClose()}>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle className="text-2xl font-bold">Bem-vindo(a) ao BrasilShots</DialogTitle>
+                    <DialogTitle className="text-2xl font-bold">Bem-vindo(a) ao Lentes Brasileiras</DialogTitle>
                     <DialogDescription>
                         Cadastre-se agora e explore o fascinante universo da fotografia!
                     </DialogDescription>
                 </DialogHeader>
                 <div className="bg-white w-full relative mt-2">
-                    {/* <h2 className="text-2xl font-bold mb-6">Bem-vindo(a) ao BrasilShots</h2> */}
+                    {/* <h2 className="text-2xl font-bold mb-6">Bem-vindo(a) ao Lentes Brasileiras</h2> */}
                     <form className="flex flex-col"
                         onSubmit={(e) => {
                             if (!showExtraFields) {

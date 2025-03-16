@@ -45,7 +45,7 @@ export class VoteService {
           userId,
           tournamentId,
           method: VotingMethod.TOP_THREE,
-          phase: currentPhase, // HARDCODED: PRECISAMOS SABER QUAL A FASE DO TOURNAMENT ESTÁ
+          phase: currentPhase,
           completed: false,
         },
       });
@@ -63,17 +63,25 @@ export class VoteService {
 
     const photoCount = methodPhotoCount[currentMethod];
 
-    // Busca fotos para votação
-    const photos = await this.prisma.photo.findMany({
-      where: { tournament: { id: tournamentId } },
-      select: { id: true, key: true },
-      take: photoCount,
+    // Busca as participações e suas fotos para o torneio
+    const participations = await this.prisma.participation.findMany({
+      where: { tournamentId: tournamentId },
+      select: {
+        photo: { // Acesse o relacionamento com a foto
+          select: { // Selecione as propriedades específicas da foto
+            id: true,
+            key: true,
+          },
+        },
+      },
+      take: photoCount, // Limite o número de fotos conforme o método de votação
     });
 
+    // Obtenha as URLs presignadas para cada foto
     const photosWithUrls = await Promise.all(
-      photos.map(async (photo) => ({
-        ...photo,
-        presignedUrl: await this.s3Service.generatePresignedUrl(photo.key),
+      participations.map(async (participation) => ({
+        ...participation.photo,
+        presignedUrl: await this.s3Service.generatePresignedUrl(participation.photo.key),
       }))
     );
 
@@ -81,9 +89,8 @@ export class VoteService {
       method: currentMethod,
       phaseProgress: currentPhase,
       photos: photosWithUrls,
-    };
+    }
   }
-
   // create(createVoteDto: CreateVoteDto) {
   //   return 'This action adds a new vote';
   // }
