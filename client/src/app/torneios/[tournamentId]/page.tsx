@@ -37,7 +37,7 @@ export default function TournamentPage() {
       {joinTournamentModal && (
         <JoinTournamentModal onClose={() => setJoinTournamentModal(false)} tournamentId={Number(tournamentId)} />
       )}
-      {open && <VoteModal onClose={() => setOpen(false)} data={startVotingData} />}
+      {open && <VoteModal onClose={() => setOpen(false)} data={startVotingData} tournamentTitle={data?.title!}/>}
       <div className="w-full h-full">
         <div className=" flex flex-col gap-6 items-center justify-center">
           <p className="text-3xl font-bold">{data?.title}</p>
