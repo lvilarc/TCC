@@ -7,14 +7,10 @@ import { useParams } from "next/navigation";
 import JoinTournamentModal from "@/components/Tournaments/JoinTournamentModal";
 import Image from "next/image";
 import { useStartVoting } from "@/hooks/Vote/useStartVoting";
+import { useAuthContext } from "@/hooks/AuthContext/useAuthContext";
 
 export default function TournamentPage() {
-  const jogo = {
-    id: 1,
-    title: "Arte Urbana",
-    imageSrc:
-      "https://agenciamural.org.br/wp-content/uploads/2018/11/Foto-Rafael-Magalh%C3%A3es-1024x401.jpg",
-  };
+  const { user } = useAuthContext();
 
   const [open, setOpen] = useState(false);
   const [joinTournamentModal, setJoinTournamentModal] = useState(false);
@@ -56,8 +52,14 @@ export default function TournamentPage() {
           <span className="py-4 w-1/2">{data?.description}</span>
           <div className="flex flex-row w-1/2 p-2 justify-between">
             <button
-              // onClick={() => setOpen(true)}
-              onClick={() => { refetch(); setOpen(true); }}
+              onClick={() => {
+                if (user) {
+                  refetch();
+                  setOpen(true);
+                } else {
+                  // Abrir modal de login
+                }
+              }}
               className="w-1/4 p-2 bg-black text-white rounded-md"
             >
               Votar
