@@ -122,12 +122,12 @@ model VotingProgress {
   tournamentId Int
   method       VotingMethod
   phase        Int // 1 para Fase 1, 2 para Fase 2
-  completed    Boolean      @default(false)
+  completed    Boolean      @default(false) // Se terminou a votação da Fase (Votou em todos os métodos)
 
   user       User       @relation(fields: [userId], references: [id])
   tournament Tournament @relation(fields: [tournamentId], references: [id])
 
-  @@unique([userId, tournamentId, method, phase]) // Evita votos duplicados
+  @@unique([userId, tournamentId, phase])
 }
 
 model PhotoVote {

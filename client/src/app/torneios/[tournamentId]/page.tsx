@@ -18,11 +18,11 @@ export default function TournamentPage() {
   const { tournamentId } = useParams();
 
   const { data, isLoading, isError } = useTournament(Number(tournamentId));
-  const { data: startVotingData, refetch } = useStartVoting(Number(tournamentId));
+  // const { data: startVotingData, refetch } = useStartVoting(Number(tournamentId));
 
-  useEffect(() => {
-    console.log('startVotingData', startVotingData)
-  }, [startVotingData])
+  // useEffect(() => {
+  //   console.log('startVotingData', startVotingData)
+  // }, [startVotingData])
 
   if (isLoading) {
     return <div>Carregando torneios...</div>;
@@ -37,7 +37,7 @@ export default function TournamentPage() {
       {joinTournamentModal && (
         <JoinTournamentModal onClose={() => setJoinTournamentModal(false)} tournamentId={Number(tournamentId)} />
       )}
-      {open && <VoteModal onClose={() => setOpen(false)} data={startVotingData} tournamentTitle={data?.title!}/>}
+      {open && <VoteModal onClose={() => setOpen(false)}  tournamentTitle={data?.title!} tournamentId={Number(tournamentId)}/>}
       <div className="w-full h-full">
         <div className=" flex flex-col gap-6 items-center justify-center">
           <p className="text-3xl font-bold">{data?.title}</p>
@@ -54,7 +54,7 @@ export default function TournamentPage() {
             <button
               onClick={() => {
                 if (user) {
-                  refetch();
+                  // refetch();
                   setOpen(true);
                 } else {
                   // Abrir modal de login

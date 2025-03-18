@@ -86,11 +86,91 @@ export class VoteService {
     );
 
     return {
+      completed: userProgress.completed,
       method: currentMethod,
       phaseProgress: currentPhase,
       photos: photosWithUrls,
     }
   }
+
+  async hasUserVoted(userId: number, tournamentId: number, phase: number, method: VotingMethod) {
+    // Verifica o progresso de votação do usuário na fase e método atual
+    const progress = await this.prisma.votingProgress.findUnique({
+      where: { userId_tournamentId_phase: { userId, tournamentId, phase } },
+    });
+
+    // Verifica se a fase foi concluída ou se o usuário já ultrapassou esta fase com outro método
+    if (progress) {
+      // Se o progresso está completo ou se o método é diferente do atual, significa que o usuário não pode votar novamente
+      if (progress.completed || progress.method !== method) {
+        return true;
+      }
+    }
+
+    // Se não houver progresso ou o usuário não completou a fase, ele pode votar
+    return false;
+  }
+
+
+  async saveVotingProgress(userId: number, tournamentId: number, phase: number, method: VotingMethod) {
+    // Definir o próximo método de votação
+    let nextMethod: VotingMethod | undefined;
+    let completed = false;
+  
+    // Sequência de métodos para votação
+    const votingMethodSequence: VotingMethod[] = [
+      VotingMethod.TOP_THREE,
+      VotingMethod.DUEL,
+      VotingMethod.RATING,
+      VotingMethod.SUPER_VOTE,
+    ];
+  
+    // Encontrar o índice do método atual na sequência
+    const currentMethodIndex = votingMethodSequence.indexOf(method);
+  
+    // Se o método atual for o último, marcar como concluído
+    if (currentMethodIndex === votingMethodSequence.length - 1) {
+      completed = true;
+    } else {
+      // Caso contrário, definir o próximo método
+      nextMethod = votingMethodSequence[currentMethodIndex + 1];
+    }
+  
+    // Preparar o objeto de dados para a atualização
+    const updateData: any = {};
+  
+    // Se o próximo método existir, adicionamos ao objeto de atualização
+    if (nextMethod) {
+      updateData.method = nextMethod;
+    }
+  
+    // Se for o último método, marcar como completado
+    if (completed) {
+      updateData.completed = true;
+    }
+  
+    // Realizar o upsert no banco de dados
+    return this.prisma.votingProgress.upsert({
+      where: { userId_tournamentId_phase: { userId, tournamentId, phase } },
+      update: updateData,
+      create: { userId, tournamentId, phase, method: nextMethod || VotingMethod.TOP_THREE },
+    });
+  }
+  
+
+  async submitVotes(userId: number, tournamentId: number, method: VotingMethod, votes: { photoId: number; voteScore: number }[]) {
+    return this.prisma.photoVote.createMany({
+      data: votes.map(({ photoId, voteScore }) => ({
+        userId,
+        tournamentId,
+        method,
+        photoId,
+        voteScore,
+      })),
+      skipDuplicates: true, // Ignora votos duplicados para o mesmo userId, photoId, tournamentId e method
+    });
+  }
+
   // create(createVoteDto: CreateVoteDto) {
   //   return 'This action adds a new vote';
   // }
