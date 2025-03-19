@@ -44,7 +44,7 @@ export default function TournamentPage() {
         {data ? (
           <div>
             <div className="w-full bg-stone-300 flex justify-center">
-              <div className="max-w-[100vw] md:max-w-[80vw] lg:max-w-[60vw] xl:max-w-[50vw] w-full relative h-[50vw] md:h-[40vw] lg:h-[30vw] xl:h-[25vw]">
+              <div className="max-w-[100vw] md:max-w-[80vw] lg:max-w-[60vw] xl:max-w-[42vw] w-full relative h-[50vw] md:h-[40vw] lg:h-[30vw] xl:h-[21vw]">
                 <Image
                   src={String(data?.bannerUrl)} // Coloque o caminho ou URL da sua imagem
                   layout="fill" // Preenche o espaço da div
@@ -60,7 +60,7 @@ export default function TournamentPage() {
                 </div>
               </div>
             </div>
-            <div className="max-w-[100vw] md:max-w-[80vw] lg:max-w-[60vw] xl:max-w-[50vw] flex flex-col gap-6 mx-auto items-center px-2 md:px-0">
+            <div className="max-w-[100vw] md:max-w-[80vw] lg:max-w-[60vw] xl:max-w-[42vw] flex flex-col gap-6 mx-auto items-center px-2 md:px-0">
               <div className="w-full mt-6">
                 <h1 className="text-lg font-semibold">Descrição do torneio:</h1>
                 <span>{data?.description}</span>

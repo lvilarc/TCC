@@ -3,7 +3,7 @@
 import TournamentCard from "@/components/TournamentCard";
 import CreateTournamentModal from "@/components/Tournaments/CreateTournamentModal";
 import { useTournaments } from "@/hooks/Tournaments/useTournaments";
-import { BoxSelectIcon, CheckIcon, ChevronDown, PlusIcon } from "lucide-react";
+import { CheckIcon, ChevronDown, PlusIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
     DropdownMenu,
@@ -16,8 +16,6 @@ import {
 import { useAuthContext } from "@/hooks/AuthContext/useAuthContext";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
-
-
 
 
 const filterOptions = [
@@ -105,13 +103,12 @@ export default function TournamentsPage() {
                             ><PlusIcon /></button>
                         ) : null}
                     </div>
-
                 </div>
                 <div className="w-full flex justify-center mt-20">
                     {isLoading ? (
                         <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-6">
-                            {Array.from({ length: 6 }).map((_, index) => (
-                                <Skeleton key={index} className="h-[310px] w-[490px] rounded-none" />
+                            {Array.from({ length: 9 }).map((_, index) => (
+                                <Skeleton key={index} className="h-[245px] w-[488px] rounded-none" />
                             ))}
                         </div>
                     ) : data?.length > 0 ? (
@@ -124,7 +121,6 @@ export default function TournamentsPage() {
                         <div>Não há torneios disponíveis.</div>
                     )}
                 </div>
-
             </div>
         </>
     );
