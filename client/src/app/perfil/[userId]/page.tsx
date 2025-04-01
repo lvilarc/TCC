@@ -4,11 +4,18 @@ import { useUser } from "@/hooks/User/useUser";
 import { Info, MapPin } from "lucide-react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
+import AddPhotoCard from "./_components/AddPhotoCard";
+import { useState } from "react";
+import PhotosNavBar from "./_components/PhotosNavBar";
+import TournamentTab from "./_components/TournamentTab";
+import FeedTab from "./_components/FeedTab";
 
 export default function PerfilPage() {
   const { userId } = useParams();
 
   const { data, isLoading, isError } = useUser(Number(userId));
+
+  const [navPage, setNavPage] = useState<"feed" | "tournament">("feed");
 
   console.log(data);
 
@@ -33,12 +40,12 @@ export default function PerfilPage() {
       </div>
 
       <div className="grid grid-cols-4 w-full h-full">
-        <div className="flex flex-col cols-span-1 p-12 gap-4">
+        <div className="flex flex-col col-span-1 p-12 gap-4">
           <span className="pt-2 font-semibold text-2xl">{data?.name}</span>
           <div className="flex flex-col gap-2">
             <div className="flex flex-row gap-2">
               <Info />
-              <span>Fotógrafo de esportes</span>
+              <span>{data?.photographerCategory}</span>
             </div>
 
             <div className="flex flex-row gap-2">
@@ -48,7 +55,15 @@ export default function PerfilPage() {
           </div>
         </div>
 
-        <div className="flex flex-wrap cols-span-3 gap-1 p-12"></div>
+        <div className="flex flex-col col-span-3">
+          <PhotosNavBar
+            setNavPage={setNavPage}
+            navPage={navPage}
+          ></PhotosNavBar>
+
+          {navPage === "tournament" && <TournamentTab></TournamentTab>}
+          {navPage === "feed" && <FeedTab></FeedTab>}
+        </div>
       </div>
     </div>
   );
