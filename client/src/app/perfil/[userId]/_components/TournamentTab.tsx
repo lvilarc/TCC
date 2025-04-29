@@ -3,7 +3,11 @@ import AddPhotoCard from "./AddPhotoCard";
 
 export default function TournamentTab() {
   const userId = 1; // Substitua pelo ID dinâmico do usuário
-  const { data: photos = [], isLoading, isError } = getUserPhotos(userId, "TOURNAMENT_PARTICIPATION");
+  const { data: photos = [], isLoading, isError } = getUserPhotos(userId);
+
+  const tournamentPhotos = photos.filter(
+    (photo) => photo.type === "FEED_PHOTO"
+  );
 
   if (isLoading) {
     return <div>Carregando fotos...</div>;
@@ -15,7 +19,7 @@ export default function TournamentTab() {
 
   return (
     <div className="flex flex-wrap gap-4 py-12">
-      {photos?.map((photo) => (
+      {tournamentPhotos?.map((photo) => (
         <div
           key={photo.id}
           className="relative group h-60 w-96 overflow-hidden rounded-lg"
@@ -29,11 +33,12 @@ export default function TournamentTab() {
 
           {/* Hover overlay */}
           <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4 text-white">
-            <span className="font-semibold text-lg">{photo.title || "foto"}</span>
+            <span className="font-semibold text-lg">
+              {photo.title || "foto"}
+            </span>
             <span className="text-sm">{""}</span>
             <div className="flex text-sm mt-2">
               <span>❤️ {photo.likes}</span>
-            
             </div>
           </div>
         </div>

@@ -3,7 +3,9 @@ import AddPhotoCard from "./AddPhotoCard";
 
 export default function FeedTab() {
   const userId = 1; // Substitua pelo ID dinâmico do usuário
-  const { data: photos = [], isLoading, isError } = getUserPhotos(userId, "FEED_PHOTO");
+  const { data: photos = [], isLoading, isError } = getUserPhotos(userId);
+
+  const feedPhotos = photos.filter((photo) => photo.type === "FEED_PHOTO");
 
   if (isLoading) {
     return <div>Carregando fotos...</div>;
@@ -15,7 +17,7 @@ export default function FeedTab() {
 
   return (
     <div className="flex flex-wrap gap-4 py-12">
-      {photos?.map((photo) => (
+      {feedPhotos?.map((photo) => (
         <div
           key={photo.id}
           className="relative group h-60 w-96 overflow-hidden rounded-lg"

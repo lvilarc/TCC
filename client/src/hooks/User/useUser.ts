@@ -32,10 +32,10 @@ export function useUser(id: number) {
 const fetchUserPhotos = async ({
   queryKey,
 }: {
-  queryKey: [string, number, string];
+  queryKey: [string, number];
 }): Promise<Photo[]> => {
-  const [, userId, type] = queryKey;
-  const response = await fetch(`${API_URL}/users/${userId}/photos?type=${type}`);
+  const [, userId] = queryKey;
+  const response = await fetch(`${API_URL}/photos/${userId}`);
 
   if (!response.ok) {
     throw new Error(`Erro ${response.status}: ${await response.text()}`);
@@ -44,10 +44,10 @@ const fetchUserPhotos = async ({
   return response.json();
 };
 
-export function getUserPhotos(userId: number, type: PhotoType) {
+export function getUserPhotos(userId: number) {
   return useQuery({
-    queryKey: ["userPhotos", userId, type],
+    queryKey: ["userPhotos", userId],
     queryFn: fetchUserPhotos,
-    enabled: !!userId && !!type, // Só executa se userId e type forem válidos
+    enabled: !!userId, // Só executa se userId e type forem válidos
   });
 }

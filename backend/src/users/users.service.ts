@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { SignUpRequest } from '../auth/dto/signup-request.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { Photo, PhotoType, User } from '@prisma/client';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class UsersService {
@@ -36,17 +36,6 @@ export class UsersService {
       });
     } catch (error) {
       throw new Error('Erro ao buscar o usuário');
-    }
-  }
-
-  async getUserPhotos(type: PhotoType, userId: string): Promise<Photo[]> {
-    try {
-      const photos = await this.prisma.photo.findMany({
-        where: { type, userId: Number(userId) },
-      });
-      return photos || []; // Retorna um array vazio se não houver fotos
-    } catch (error) {
-      throw new Error('Erro ao buscar fotos');
     }
   }
 }

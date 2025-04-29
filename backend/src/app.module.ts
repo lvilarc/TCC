@@ -5,15 +5,21 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { TournamentsModule } from './tournaments/tournaments.module';
 import { S3Service } from './s3/s3.service';
-import { PhotoService } from './photo/photo.service';
 import { S3Module } from './s3/s3.module';
-import { PhotoModule } from './photo/photo.module';
+import { PhotoModule } from './photo/photos.module';
 import { PrismaService } from './prisma/prisma.service';
 import { ParticipationModule } from './participation/participation.module';
 
 @Module({
-  imports: [UsersModule, AuthModule, TournamentsModule, S3Module, PhotoModule, ParticipationModule],
+  imports: [
+    UsersModule,
+    AuthModule,
+    TournamentsModule,
+    S3Module,
+    PhotoModule,
+    ParticipationModule,
+  ],
   controllers: [AppController],
-  providers: [AppService, S3Service, PhotoService, PrismaService],
+  providers: [AppService, S3Service, PrismaService],
 })
 export class AppModule {}

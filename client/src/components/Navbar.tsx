@@ -49,7 +49,7 @@ export default function Navbar() {
                     }, 100);
                 }} />
             )}
-            <nav className="bg-white text-stone-800 h-[69px] flex justify-between px-10 lg:px-40 items-center fixed top-0 left-0 w-full border-b shadow-md z-50">
+            <nav className="bg-white text-stone-800 h-20 flex justify-between px-10 lg:px-40 items-center fixed top-0 left-0 w-full border-b shadow-md z-50">
                 <div className="flex items-center h-full">
                     <Link href="/">
                         <div className="flex items-center gap-2">
