@@ -1,3 +1,4 @@
+import { Photo, PhotoType } from "@/types/Photo";
 import { User } from "@/types/User";
 import { useQuery } from "@tanstack/react-query";
 
@@ -26,4 +27,27 @@ export function useUser(id: number) {
   });
 
   return { data, error, isLoading, isError };
+}
+
+const fetchUserPhotos = async ({
+  queryKey,
+}: {
+  queryKey: [string, number];
+}): Promise<Photo[]> => {
+  const [, userId] = queryKey;
+  const response = await fetch(`${API_URL}/photos/${userId}`);
+
+  if (!response.ok) {
+    throw new Error(`Erro ${response.status}: ${await response.text()}`);
+  }
+
+  return response.json();
+};
+
+export function getUserPhotos(userId: number) {
+  return useQuery({
+    queryKey: ["userPhotos", userId],
+    queryFn: fetchUserPhotos,
+    enabled: !!userId, // Só executa se userId e type forem válidos
+  });
 }

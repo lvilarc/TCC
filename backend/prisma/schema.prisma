@@ -26,8 +26,6 @@ model User {
   level                Int      @default(1)
   rank                 Rank     @default(OBSERVADOR_INICIANTE)
   photographerCategory String   @default("Entusiasta")
-  profilePicUrl        String?
-  coverPhotoUrl        String?
   city                 String?
   country              String?
   createdAt            DateTime @default(now())
@@ -66,7 +64,7 @@ model Tournament {
 enum PhotoType {
   PROFILE_AVATAR // Foto de perfil
   COVER_PHOTO // Foto de capa do perfil
-  PROFILE_PHOTO // Fotos no perfil do usuário (fora de torneios)
+  FEED_PHOTO // Fotos no perfil do usuário (fora de torneios)
   TOURNAMENT_BANNER // Banner do Torneio
   TOURNAMENT_PARTICIPATION // Foto para participar de um torneio
   OTHER
@@ -75,6 +73,9 @@ enum PhotoType {
 model Photo {
   id        Int       @id @default(autoincrement()) // ID da foto
   userId    Int // ID do usuário que enviou a foto
+  title     String?
+  location  String?
+  likes     Int       @default(0)
   key       String // Key do arquivo no S3 (identificador único do arquivo no bucket)
   url       String // URL da foto (armazenada no S3, por exemplo)
   type      PhotoType // Tipo da foto

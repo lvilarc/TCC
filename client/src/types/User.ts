@@ -18,8 +18,6 @@ export interface User {
   level: number;
   rank: Rank;
   photographerCategory: string;
-  profilePicUrl?: string;
-  coverPhotoUrl?: string;
   city?: string;
   country?: string;
   createdAt: Date;

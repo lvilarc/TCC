@@ -6,14 +6,14 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { User } from 'src/auth/user.decorator';
 import { PhotoType, User as UserSchema } from '@prisma/client';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { PhotoService } from 'src/photo/photo.service';
+import { PhotosService } from 'src/photo/photos.service';
 import { TournamentFilter } from './enums/tournament-filter.enum';
 
 @Controller('tournaments')
 export class TournamentsController {
   constructor(
     private readonly tournamentsService: TournamentsService,
-    private readonly photoService: PhotoService,
+    private readonly photosService: PhotosService,
   ) {}
 
   @UseGuards(JwtAuthGuard)
@@ -25,7 +25,7 @@ export class TournamentsController {
     @User() user: UserSchema | null,
   ) {
     if (user) {
-      const photo = await this.photoService.createAndUploadPhoto(
+      const photo = await this.photosService.createAndUploadPhoto(
         file,
         user,
         PhotoType.TOURNAMENT_BANNER,
