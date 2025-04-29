@@ -65,25 +65,35 @@ const CadastroModal: React.FC<CadastroModalProps> = ({ onClose, openLogin }) => 
         }
     };
 
+    const handleKeyPress = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter' && !showExtraFields) {
+            e.preventDefault(); 
+            handleNextStep();   
+        }
+    };
+
     return (
         <Dialog open={true} onOpenChange={(open) => !open && onClose()}>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle className="text-2xl font-bold">Bem-vindo(a) ao BrasilShots</DialogTitle>
+                    <DialogTitle className="text-2xl font-bold">Bem-vindo(a) ao Lentes Brasileiras</DialogTitle>
                     <DialogDescription>
                         Cadastre-se agora e explore o fascinante universo da fotografia!
                     </DialogDescription>
                 </DialogHeader>
                 <div className="bg-white w-full relative mt-2">
-                    {/* <h2 className="text-2xl font-bold mb-6">Bem-vindo(a) ao BrasilShots</h2> */}
-                    <form className="flex flex-col" onSubmit={(e) => {
-                        if (!showExtraFields) {
-                            e.preventDefault();
-                            handleNextStep();
-                        } else {
-                            handleSubmit(e)
-                        }
-                    }}>
+                    {/* <h2 className="text-2xl font-bold mb-6">Bem-vindo(a) ao Lentes Brasileiras</h2> */}
+                    <form className="flex flex-col"
+                        onSubmit={(e) => {
+                            if (!showExtraFields) {
+                                e.preventDefault();
+                                handleNextStep();
+                            } else {
+                                handleSubmit(e)
+                            }
+                        }}
+                        onKeyDown={handleKeyPress}
+                    >
                         <div className="mb-4">
                             <label htmlFor="email" className="block text-sm font-medium">E-mail</label>
                             <input
@@ -153,7 +163,7 @@ const CadastroModal: React.FC<CadastroModalProps> = ({ onClose, openLogin }) => 
                                 <div className="flex text-xs font-medium gap-2 justify-center mt-4">
                                     <p>Já tem uma conta?</p>
                                     <button className="underline text-blue-500 select-none"
-                                    onClick={openLogin}
+                                        onClick={openLogin}
                                     >Fazer login</button>
                                 </div>
                             </div>

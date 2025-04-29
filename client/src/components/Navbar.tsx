@@ -2,7 +2,7 @@
 
 import Cookies from 'js-cookie';
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CadastroModal from "./CadastroModal";
 import { useAuthContext } from "@/hooks/AuthContext/useAuthContext";
 import { UserCircle } from "./icons/UserCircle";
@@ -31,6 +31,16 @@ export default function Navbar() {
     const [cadastroModalOpen, setCadastroModalOpen] = useState(false);
     const [loginModalOpen, setLoginModalOpen] = useState(false);
 
+    useEffect(() => {
+        const handleOpenLogin = () => setLoginModalOpen(true);
+    
+        window.addEventListener("openLoginModal", handleOpenLogin);
+    
+        return () => {
+          window.removeEventListener("openLoginModal", handleOpenLogin);
+        };
+      }, []);
+
     return (
         <>
             {cadastroModalOpen && (
@@ -49,15 +59,15 @@ export default function Navbar() {
                     }, 100);
                 }} />
             )}
-            <nav className="bg-white text-stone-800 h-20 flex justify-between px-10 lg:px-40 items-center fixed top-0 left-0 w-full border-b shadow-md z-50">
+            <nav className="bg-white text-stone-800 h-[69px] flex justify-between px-2 md:px-10 lg:px-40 items-center fixed top-0 left-0 w-full border-b shadow-md z-50">
                 <div className="flex items-center h-full">
                     <Link href="/">
                         <div className="flex items-center gap-2">
                             <div className="w-6 h-6 rounded-full bg-stone-800" />
-                            <span className="text-xl font-semibold">BrasilShots</span>
+                            <span className="text-sm md:text-xl font-semibold whitespace-nowrap">Lentes Brasileiras</span>
                         </div>
                     </Link>
-                    <ul className="flex ml-20 h-full items-center">
+                    <ul className="flex md:ml-20 h-full items-center">
                         {menuItems.map(({ name, path }) => {
                             const isActive = pathname === path || (path === "/torneios" && pathname.startsWith("/torneios"));
 
@@ -65,7 +75,7 @@ export default function Navbar() {
                                 <li key={path} className="h-full">
                                     <Link
                                         href={path}
-                                        className={`px-5 h-full flex items-center   ${isActive ? "bg-stone-100 font-medium text-stone-800" : "text-stone-600 hover:text-stone-800"
+                                        className={`px-5 h-full flex items-center text-xs md:text-base  ${isActive ? "bg-stone-100 font-medium text-stone-800" : "text-stone-600 hover:text-stone-800"
                                             }`}
                                     >
                                         {name}

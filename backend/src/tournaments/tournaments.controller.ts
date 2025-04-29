@@ -1,18 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  UseGuards,
-  UseInterceptors,
-  UploadedFile,
-  Req,
-  Query,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, UseInterceptors, UploadedFile, Req, Query, UnauthorizedException } from '@nestjs/common';
 import { TournamentsService } from './tournaments.service';
 import { CreateTournamentDto } from './dto/create-tournament.dto';
 import { UpdateTournamentDto } from './dto/update-tournament.dto';
@@ -69,6 +55,8 @@ export class TournamentsController {
   public async findTournamentById(@Param('id') id: string) {
     return this.tournamentsService.findTournamentById(id);
   }
+
+  
 
   @Patch(':id')
   update(

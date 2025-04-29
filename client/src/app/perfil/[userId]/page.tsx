@@ -65,12 +65,12 @@ export default function PerfilPage() {
         <div className="flex flex-col col-span-1 p-12 gap-4">
           <span className="pt-2 font-semibold text-2xl">{user?.name}</span>
           <div className="flex flex-col gap-2">
-            <div className="flex flex-row gap-2">
+            <div className="flex flex-row gap-2 items-center">
               <Info />
               <span>{user?.photographerCategory}</span>
             </div>
 
-            <div className="flex flex-row gap-2">
+            <div className="flex flex-row gap-2 items-center">
               <MapPin />
               <span>Rio de janeiro, Brasil</span>
             </div>
