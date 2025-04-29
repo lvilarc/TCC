@@ -4,7 +4,7 @@ import { CreateParticipationDto } from './dto/create-participation.dto';
 import { UpdateParticipationDto } from './dto/update-participation.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { User } from 'src/auth/user.decorator';
-import { PhotosService } from 'src/photo/photos.service';
+import { PhotoService } from 'src/photo/photo.service';
 import { PhotoType, User as UserSchema } from '@prisma/client';
 import { FileInterceptor } from '@nestjs/platform-express';
 
@@ -12,7 +12,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 export class ParticipationController {
   constructor(
     private readonly participationService: ParticipationService,
-    private readonly photosService: PhotosService,  // Injetando o serviço de foto
+    private readonly photoService: PhotoService,  // Injetando o serviço de foto
   ) { }
 
   @UseGuards(JwtAuthGuard)
@@ -25,7 +25,7 @@ export class ParticipationController {
   ) {
     createParticipationDto.tournamentId = parseInt(createParticipationDto.tournamentId as unknown as string, 10);
     // Envia o arquivo para o serviço de foto
-    const photo = await this.photosService.createAndUploadPhoto(file, user, PhotoType.TOURNAMENT_PARTICIPATION);
+    const photo = await this.photoService.createAndUploadPhoto(file, user, PhotoType.TOURNAMENT_PARTICIPATION);
     
     // Cria a participação, passando o ID da foto
     return this.participationService.create(createParticipationDto, user, photo.id);

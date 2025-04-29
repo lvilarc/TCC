@@ -26,6 +26,8 @@ model User {
   level                Int      @default(1)
   rank                 Rank     @default(OBSERVADOR_INICIANTE)
   photographerCategory String   @default("Entusiasta")
+  profilePicUrl        String?
+  coverPhotoUrl        String?
   city                 String?
   country              String?
   createdAt            DateTime @default(now())

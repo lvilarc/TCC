@@ -8,7 +8,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class ParticipationService {
   constructor(private readonly prisma: PrismaService) { }
   async create(createParticipationDto: CreateParticipationDto, user: User, photoId: number) {
-    // Cria a participação com o photoId gerado pelo PhotosService
+    // Cria a participação com o photoId gerado pelo PhotoService
     const participation = await this.prisma.participation.create({
       data: {
         ...createParticipationDto,
