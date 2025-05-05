@@ -36,6 +36,9 @@ model User {
   participations     Participation[] // Participações do usuário em torneios
   votingProgress     VotingProgress[]
   photoVotes         PhotoVote[]
+  posts              Post[]
+  comments           Comment[]
+  likes              Like[]
 
   @@map("users")
 }
@@ -145,4 +148,35 @@ model PhotoVote {
   tournament Tournament @relation(fields: [tournamentId], references: [id])
 
   @@unique([userId, photoId, tournamentId, method]) // Evita duplicação de votos do mesmo usuário
+}
+
+model Post {
+  id        Int    @id @default(autoincrement())
+  content   String
+  createdAt DateTime  @default(now())
+  authorId  Int
+  author    User      @relation(fields: [authorId], references: [id])
+  comments  Comment[]
+  likes     Like[]
+}
+
+model Comment {
+  id        Int   @id @default(autoincrement())
+  content   String
+  createdAt DateTime @default(now())
+  postId    Int
+  post      Post     @relation(fields: [postId], references: [id])
+  authorId  Int
+  author    User     @relation(fields: [authorId], references: [id])
+}
+
+model Like {
+  id        Int   @id @default(autoincrement())
+  userId    Int
+  postId    Int
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  post      Post     @relation(fields: [postId], references: [id])
+
+  @@unique([userId, postId])
 }

@@ -10,9 +10,11 @@ import { PhotoModule } from './photo/photos.module';
 import { PrismaService } from './prisma/prisma.service';
 import { ParticipationModule } from './participation/participation.module';
 import { VoteModule } from './vote/vote.module';
+import { PostModule } from './post/post.module';
+import { CommentModule } from './comment/comment.module';
 
 @Module({
-  imports: [UsersModule, AuthModule, TournamentsModule, S3Module, PhotoModule, ParticipationModule, VoteModule],
+  imports: [UsersModule, AuthModule, TournamentsModule, S3Module, PhotoModule, ParticipationModule, VoteModule, PostModule, CommentModule],
   controllers: [AppController],
   providers: [AppService, S3Service, PrismaService],
 })

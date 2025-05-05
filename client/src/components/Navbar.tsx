@@ -20,6 +20,7 @@ import { usePathname, useRouter } from 'next/navigation';
 const menuItems = [
     { name: "Home", path: "/home" },
     { name: "Torneios", path: "/torneios" },
+    { name: "Comunidade", path: "/comunidade" },
     { name: "Sobre", path: "/sobre" },
     { name: "Contato", path: "/contato" }
 ];
