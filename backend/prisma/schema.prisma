@@ -70,6 +70,7 @@ enum PhotoType {
   FEED_PHOTO // Fotos no perfil do usuário (fora de torneios)
   TOURNAMENT_BANNER // Banner do Torneio
   TOURNAMENT_PARTICIPATION // Foto para participar de um torneio
+  COMMUNITY_POST // Fotos anexadas a posts da comunidade
   OTHER
 }
 
@@ -92,6 +93,9 @@ model Photo {
 
   tournament Tournament? @relation
   photoVote  PhotoVote[]
+
+  postId Int? // Campo opcional para armazenar o ID do post
+  post   Post? @relation(fields: [postId], references: [id])
 
   @@map("photos")
 }
@@ -151,17 +155,18 @@ model PhotoVote {
 }
 
 model Post {
-  id        Int    @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   content   String
   createdAt DateTime  @default(now())
   authorId  Int
   author    User      @relation(fields: [authorId], references: [id])
   comments  Comment[]
   likes     Like[]
+  photos     Photo[]
 }
 
 model Comment {
-  id        Int   @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   content   String
   createdAt DateTime @default(now())
   postId    Int
@@ -171,7 +176,7 @@ model Comment {
 }
 
 model Like {
-  id        Int   @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   userId    Int
   postId    Int
   createdAt DateTime @default(now())
