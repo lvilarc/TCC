@@ -9,32 +9,34 @@ export class PhotosService {
   constructor(
     private readonly s3Service: S3Service, // Injetando o S3Service
     private readonly prisma: PrismaService, // Injetando o PrismaService
-  ) {}
+  ) { }
 
-  // Função para fazer o upload de uma foto
   async createAndUploadPhoto(
     file: Express.Multer.File,
     user: User,
     type: PhotoType,
   ): Promise<Photo> {
-    // Fazendo o upload para o S3 e recebendo o resultado
-    const key = await this.s3Service.uploadFile(file);
+    try {
+      const key = await this.s3Service.uploadFile(file); // ← pode lançar erro
 
-    // Salvando a key e URL da foto no banco de dados usando Prisma
-    const photo = await this.prisma.photo.create({
-      data: {
-        key: key, // Armazena a key do arquivo
-        url: '', // Armazena a URL gerada pelo S3
-        type: type, // Tipo do arquivo (jpg, png, etc.)
-        user: {
-          connect: { id: user.id }, // Conecta a foto ao usuário utilizando o userId
+      const photo = await this.prisma.photo.create({
+        data: {
+          key: key,
+          url: '', // pode ser atualizado depois com presigned URL
+          type: type,
+          user: {
+            connect: { id: user.id },
+          },
         },
-        // Aqui você pode adicionar outras informações, se necessário
-      },
-    });
+      });
 
-    return photo;
+      return photo;
+    } catch (error) {
+      console.error('Erro ao criar/upload da foto:', error);
+      throw new Error('Falha ao criar ou fazer upload da foto.');
+    }
   }
+
 
   // Função para obter as fotos do banco
   async getPhotos(): Promise<any> {

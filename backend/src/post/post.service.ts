@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { S3Service } from 'src/s3/s3.service';
+import { User as UserSchema } from '@prisma/client';
+import { CreatePostDto } from './dto/create-post.dto';
 
 @Injectable()
 export class PostService {
@@ -8,6 +10,35 @@ export class PostService {
         private readonly prisma: PrismaService,
         private readonly s3Service: S3Service,
     ) { }
+
+    async create(createPostDto: CreatePostDto, user: UserSchema, photoIds: number[] = []) {
+        const post = await this.prisma.post.create({
+            data: {
+                content: createPostDto.content,
+                authorId: user.id,
+                photos: photoIds.length
+                    ? {
+                        connect: photoIds.map((id) => ({ id })),
+                    }
+                    : undefined,
+            },
+            include: {
+                author: true,
+                photos: true,
+                comments: true,
+                likes: true,
+            },
+        });
+    
+        // Gerar URL assinada da(s) foto(s) do post
+        for (const photo of post.photos) {
+            photo.url = await this.s3Service.generatePresignedUrl(photo.key);
+        }
+    
+        return post;
+    }
+    
+
 
     async findAll() {
         const posts = await this.prisma.post.findMany({

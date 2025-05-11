@@ -41,7 +41,7 @@ export default function RootLayout({
           <AuthContextProvider>
             <AuthCheck>
               <Navbar />
-              <div className="py-20">
+              <div className="pt-20">
                 <main>
                   {children}
                 </main>

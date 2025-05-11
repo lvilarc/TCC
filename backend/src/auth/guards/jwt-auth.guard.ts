@@ -20,17 +20,24 @@ export class JwtAuthGuard implements CanActivate {
     const token = authHeader.split(' ')[1];
 
     try {
-      const decoded = this.jwtService.verify(token);
+      console.log('Primeiro1')
+      const decoded = this.jwtService.verify(token, {
+        secret: process.env.JWT_SECRET, 
+      });
+      console.log('Primeiro2')
       const userId = decoded.sub;
+      console.log('Primeiro3')
       const user = await this.prisma.user.findUnique({  // Faz a consulta ao banco de dados
         where: { id: userId },
       });
       if (!user) {
+        console.log('Segundo')
         throw new UnauthorizedException('Usuário não encontrado.');
       }
       request.user = user; // Adiciona o usuário ao request
       return true;
     } catch (error) {
+      console.log('Terceiroi')
       request.user = null;
       return true;
       // throw new UnauthorizedException('Token inválido ou expirado.');
