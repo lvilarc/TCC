@@ -72,7 +72,7 @@ export default function TournamentsPage() {
             {createTournamentModal && (
                 <CreateTournamentModal onClose={() => setCreateTournamentModal(false)} />
             )}
-            <div className="w-full">
+            <div className="w-full pb-10">
                 <div className="fixed w-full h-[70px] top-[69px] bg-black bg-opacity-50 z-40 backdrop-blur-lg">
                     <div className="flex justify-center items-center h-full text-sm gap-10">
                         <span className="text-white uppercase text-lg font-semibold">Torneios</span>

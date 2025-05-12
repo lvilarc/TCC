@@ -31,7 +31,6 @@ export class TournamentsService {
   }
 
   async findAll(filter?: TournamentFilter, userId?: number) {
-    console.log(userId)
     const tournaments = await this.prisma.tournament.findMany({
       include: {
         banner: true,  // Incluir o banner relacionado ao torneio

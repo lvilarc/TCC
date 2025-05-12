@@ -7,7 +7,6 @@ export class PhotosController {
 
   @Get(':userId')
   public async getUserPhotos(@Param('userId') userId: string) {
-    console.log(`Fetching photos for userId: ${userId}`);
     return this.photosService.getUserPhotos(userId);
   }
 }

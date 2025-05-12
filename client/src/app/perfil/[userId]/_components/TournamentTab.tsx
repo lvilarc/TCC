@@ -1,8 +1,6 @@
 import { getUserPhotos } from "@/hooks/User/useUser";
-import AddPhotoCard from "./AddPhotoCard";
 
-export default function TournamentTab() {
-  const userId = 1; // Substitua pelo ID dinâmico do usuário
+export default function TournamentTab({userId}: {userId: number}) {
   const { data: photos = [], isLoading, isError } = getUserPhotos(userId);
 
   const tournamentPhotos = photos.filter(
@@ -43,7 +41,6 @@ export default function TournamentTab() {
           </div>
         </div>
       ))}
-      <AddPhotoCard></AddPhotoCard>
     </div>
   );
 }

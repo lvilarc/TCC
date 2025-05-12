@@ -28,7 +28,6 @@ export default function ComunidadePage() {
 
         try {
             await createPost({ content, files: images });
-            alert('Post publicado com sucesso!');
             setContent(''); // Limpa o conteúdo após publicar
             setImages([]);  // Limpa as imagens após publicar
         } catch (err) {
@@ -45,14 +44,16 @@ export default function ComunidadePage() {
     };
 
     return (
-        <div className='w-full bg-stone-300 mt-[-12px]'>
-            <div className="max-w-4xl mx-auto p-10 space-y-6 bg-white">
+        <div className='w-full bg-stone-200 mt-[-12px]'>
+            <div className="max-w-4xl mx-auto p-10 space-y-6 bg-white border-r-2 border-l-2 border-stone-100">
                 {showUploadModal && (
                     <UploadPhotoPostModal
                         onClose={() => setShowUploadModal(false)}
                         onUpload={handleUpload}
                     />
                 )}
+
+                <p className='font-semibold text-lg'>Comunidade</p>
 
                 {/* Seção de publicação */}
                 <div className="w-full bg-white space-y-2">

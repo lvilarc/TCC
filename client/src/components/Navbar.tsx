@@ -16,13 +16,15 @@ import {
 } from "@/components/ui/dropdown-menu"
 import LoginModal from './LoginModal';
 import { usePathname, useRouter } from 'next/navigation';
+import { Menu } from 'lucide-react';
+import { LentesBrasileirasLogo } from './icons/LentesBrasileirasLogo';
 
 const menuItems = [
     { name: "Home", path: "/home" },
     { name: "Torneios", path: "/torneios" },
     { name: "Comunidade", path: "/comunidade" },
     { name: "Sobre", path: "/sobre" },
-    { name: "Contato", path: "/contato" }
+    // { name: "Contato", path: "/contato" }
 ];
 
 export default function Navbar() {
@@ -34,13 +36,13 @@ export default function Navbar() {
 
     useEffect(() => {
         const handleOpenLogin = () => setLoginModalOpen(true);
-    
+
         window.addEventListener("openLoginModal", handleOpenLogin);
-    
+
         return () => {
-          window.removeEventListener("openLoginModal", handleOpenLogin);
+            window.removeEventListener("openLoginModal", handleOpenLogin);
         };
-      }, []);
+    }, []);
 
     return (
         <>
@@ -60,15 +62,16 @@ export default function Navbar() {
                     }, 100);
                 }} />
             )}
-            <nav className="bg-white text-stone-800 h-[69px] flex justify-between px-2 md:px-10 lg:px-40 items-center fixed top-0 left-0 w-full border-b shadow-md z-50">
+            <nav className="bg-white text-stone-800 h-[69px] flex justify-between px-2 md:px-10 2xl:px-40 items-center fixed top-0 left-0 w-full border-b shadow-md z-50">
                 <div className="flex items-center h-full">
                     <Link href="/">
                         <div className="flex items-center gap-2">
-                            <div className="w-6 h-6 rounded-full bg-stone-800" />
-                            <span className="text-sm md:text-xl font-semibold whitespace-nowrap">Lentes Brasileiras</span>
+                            {/* <div className="w-6 h-6 rounded-full bg-stone-800" /> */}
+                            <LentesBrasileirasLogo/>
+                            <span className="text-base xl:text-xl font-semibold whitespace-nowrap">LentesBrasileiras</span>
                         </div>
                     </Link>
-                    <ul className="flex md:ml-20 h-full items-center">
+                    <ul className="hidden xl:flex md:ml-20 h-full items-center">
                         {menuItems.map(({ name, path }) => {
                             const isActive = pathname === path || (path === "/torneios" && pathname.startsWith("/torneios"));
 
@@ -118,19 +121,50 @@ export default function Navbar() {
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
+
+                        {/* Burger menu visível apenas em telas < xl */}
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <button className="xl:hidden ml-2">
+                                    <Menu size={20} />
+                                </button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent className="w-48 mt-2">
+                                {menuItems.map(({ name, path }) => (
+                                    <DropdownMenuItem key={path} onClick={() => router.push(path)}>
+                                        {name}
+                                    </DropdownMenuItem>
+                                ))}
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                     </div>
                 ) : (
-                    <div className="flex gap-6 items-center font-semibold text-sm select-none">
+                    <div className="flex gap-2 items-center font-semibold text-xs xl:text-sm select-none">
                         <button
                             onClick={() => {
                                 setLoginModalOpen(true);
                             }}
                         >Entrar</button>
-                        <button className="px-5 py-2 bg-stone-800 rounded-full text-white whitespace-nowrap"
+                        <button className="px-5 py-2 ml-2 bg-stone-800 rounded-full text-white whitespace-nowrap"
                             onClick={() => {
                                 setCadastroModalOpen(true);
                             }}
                         >Criar conta</button>
+
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <button className="xl:hidden ml-2">
+                                    <Menu size={20} />
+                                </button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent className="w-48 mt-2">
+                                {menuItems.map(({ name, path }) => (
+                                    <DropdownMenuItem key={path} onClick={() => router.push(path)}>
+                                        {name}
+                                    </DropdownMenuItem>
+                                ))}
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                     </div>
                 )}
 

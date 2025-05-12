@@ -43,7 +43,7 @@ export default function TournamentPage() {
       <div className="w-full h-full mt-[-12px]">
         {data ? (
           <div>
-            <div className="w-full bg-stone-300 flex justify-center">
+            <div className="w-full bg-stone-200 flex justify-center">
               <div className="max-w-[100vw] md:max-w-[80vw] lg:max-w-[60vw] xl:max-w-[42vw] w-full relative h-[50vw] md:h-[40vw] lg:h-[30vw] xl:h-[21vw]">
                 <Image
                   src={String(data?.bannerUrl)} // Coloque o caminho ou URL da sua imagem

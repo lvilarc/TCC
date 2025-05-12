@@ -1,18 +1,18 @@
-type PhotosNabBarProps = {
-  setNavPage: React.Dispatch<React.SetStateAction<"feed" | "tournament">>;
-  navPage: "feed" | "tournament";
+type PerfilNavBarProps = {
+  setNavPage: React.Dispatch<React.SetStateAction<"feed" | "tournament" | "comunidade">>;
+  navPage: "feed" | "tournament" | "comunidade";
 };
 
-export default function PhotosNavBar({
+export default function PerfilNavBar({
   setNavPage,
   navPage,
-}: PhotosNabBarProps) {
+}: PerfilNavBarProps) {
   return (
-    <nav className="p-4 mt-10 border-b-2 mr-12">
+    <nav className="p-4 mt-10 border-b-2">
       <ul className="flex justify-start space-x-8">
         <li>
           <a
-            href="#"
+            href="#feed"
             className={
               navPage === "feed"
                 ? "text-gray-800 border-b-2 border-black pb-5 font-bold"
@@ -25,7 +25,7 @@ export default function PhotosNavBar({
         </li>
         <li>
           <a
-            href="#"
+            href="#torneios"
             className={
               navPage === "tournament"
                 ? "text-gray-800 border-b-2 border-black pb-5 font-bold"
@@ -34,6 +34,19 @@ export default function PhotosNavBar({
             onClick={() => setNavPage("tournament")}
           >
             Torneios
+          </a>
+        </li>
+        <li>
+          <a
+            href="#comunidade"
+            className={
+              navPage === "comunidade"
+                ? "text-gray-800 border-b-2 border-black pb-5 font-bold"
+                : "text-gray-600 hover:text-gray-800 font-semibold"
+            }
+            onClick={() => setNavPage("comunidade")}
+          >
+            Comunidade
           </a>
         </li>
       </ul>

@@ -86,7 +86,7 @@ return (
                     </DialogDescription> */}
             </DialogHeader>
             <div className="bg-white w-full relative mt-2">
-                {/* <h2 className="text-2xl font-bold mb-6">Bem-vindo(a) ao Lentes Brasileiras</h2> */}
+                {/* <h2 className="text-2xl font-bold mb-6">Bem-vindo(a) ao LentesBrasileiras</h2> */}
                 <form className="flex flex-col" onSubmit={handleSubmit}>
                     <div className="mb-4">
                         <label htmlFor="email" className="block text-sm font-medium">E-mail</label>

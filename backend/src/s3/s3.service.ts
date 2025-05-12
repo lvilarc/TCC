@@ -10,14 +10,12 @@ export class S3Service {
     private bucketName: string; // Adicionando a variável para o bucket
 
     constructor() {
-        console.log('Carregando o cliente S3...');
         this.s3 = new S3Client({
             region: process.env.AWS_REGION, // Região do S3
             credentials: fromEnv(), // Carrega as credenciais do ambiente
         });
 
         const bucketName = process.env.AWS_S3_BUCKET;
-        console.log('Bucket:', bucketName);
         if (!bucketName) {
             throw new Error('AWS_S3_BUCKET is not defined in environment variables');
         }
@@ -26,7 +24,6 @@ export class S3Service {
 
     // Função de upload de arquivo para o S3
     async uploadFile(file: Express.Multer.File): Promise<string> {
-        console.log('Iniciando o upload do arquivo...');
         const uniqueKey = `${uuidv4()}.${file.mimetype.split('/')[1]}`; // Gerando uma chave única para o arquivo
         const params = {
             Bucket: this.bucketName, // Usando o bucket name carregado do .env
@@ -39,7 +36,6 @@ export class S3Service {
         try {
             // Enviando o arquivo para o S3
             await this.s3.send(command);
-            console.log('Upload concluído com sucesso.');
             // Retornando o uniqueKey após o upload
             return uniqueKey;
         } catch (error) {

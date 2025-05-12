@@ -22,24 +22,19 @@ export class PostController {
     @UploadedFiles() files: Express.Multer.File[],
     @User() user: UserSchema | null,
   ) {
-    console.log(user)
     if (!user) {
       throw new UnauthorizedException('Sem autorização.');
     }
 
     const photoIds: number[] = [];
 
-    console.log('files', files)
-
     if (files && files.length > 0) {
-      console.log('entrou aqui valeu')
       for (const file of files) {
         const photo = await this.photosService.createAndUploadPhoto(
           file,
           user,
           PhotoType.COMMUNITY_POST,
         );
-        console.log(photo.id)
         photoIds.push(photo.id);
       }
     }
