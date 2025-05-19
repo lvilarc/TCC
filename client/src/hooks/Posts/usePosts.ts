@@ -32,8 +32,6 @@ export interface Post {
     }[];
 }
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL as string;
-
 export const usePosts = () => {
     return useQuery<Post[]>({
         queryKey: ['posts'],

@@ -20,10 +20,10 @@ import { Menu } from 'lucide-react';
 import { LentesBrasileirasLogo } from './icons/LentesBrasileirasLogo';
 
 const menuItems = [
-    { name: "Home", path: "/home" },
+    // { name: "Home", path: "/home" },
     { name: "Torneios", path: "/torneios" },
     { name: "Comunidade", path: "/comunidade" },
-    { name: "Sobre", path: "/sobre" },
+    // { name: "Sobre", path: "/sobre" },
     // { name: "Contato", path: "/contato" }
 ];
 
@@ -107,9 +107,9 @@ export default function Navbar() {
                                     }}>
                                         Meu perfil
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem>
+                                    {/* <DropdownMenuItem>
                                         Configurações
-                                    </DropdownMenuItem>
+                                    </DropdownMenuItem> */}
                                 </DropdownMenuGroup>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem
