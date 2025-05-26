@@ -1,11 +1,21 @@
 import { getUserPhotos } from "@/hooks/User/useUser";
 import AddPhotoCard from "./AddPhotoCard";
 import { CameraOff } from "lucide-react";
+import { useState } from "react";
+import ImageModal from "@/components/ImageModal";
 
 export default function FeedTab({ userId, isOwner }: { userId: number, isOwner: boolean }) {
   const { data: photos = [], isLoading, isError } = getUserPhotos(userId);
 
   const feedPhotos = photos.filter((photo) => photo.type === "FEED_PHOTO");
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentImage, setCurrentImage] = useState("");
+
+  const openModal = (imageUrl: string) => {
+    setCurrentImage(imageUrl);
+    setIsModalOpen(true);
+  };
 
   if (isLoading) {
     return <div>Carregando fotos...</div>;
@@ -17,6 +27,12 @@ export default function FeedTab({ userId, isOwner }: { userId: number, isOwner: 
 
   return (
     <div className="flex flex-wrap gap-4 py-12">
+
+      <ImageModal
+        imageUrl={currentImage}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
 
       {feedPhotos.length === 0 ? (
         <>
@@ -43,13 +59,14 @@ export default function FeedTab({ userId, isOwner }: { userId: number, isOwner: 
                 src={photo.url}
                 alt={photo.title || "foto"}
                 className="h-full w-full object-cover"
+                onClick={() => openModal(photo.url)}
               />
-              <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4 text-white">
+              {/* <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4 text-white">
                 <span className="font-semibold text-lg">{photo.title || "foto"}</span>
                 <div className="flex text-sm mt-2">
                   <span>❤️ {photo.likes}</span>
                 </div>
-              </div>
+              </div> */}
             </div>
           ))}
         </>

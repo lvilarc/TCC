@@ -13,6 +13,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Award, CalendarIcon, FlagIcon, ImageIcon, ListOrdered, MapPin, Medal, Trophy, User } from "lucide-react";
 import { UserCircle } from "@/components/icons/UserCircle";
 import Link from "next/link";
+import ImageModal from "@/components/ImageModal";
 
 function formatHumanDate(dateString: string): string {
   const date = new Date(dateString);
@@ -48,6 +49,14 @@ export default function TournamentPage() {
   const { data, isLoading, isError } = useTournament(Number(tournamentId));
   // const { data: startVotingData, refetch } = useStartVoting(Number(tournamentId));
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentImage, setCurrentImage] = useState("");
+
+  const openModal = (imageUrl: string) => {
+    setCurrentImage(imageUrl);
+    setIsModalOpen(true);
+  };
+
   useEffect(() => {
     console.log('data', data)
   }, [data])
@@ -65,6 +74,12 @@ export default function TournamentPage() {
       {joinTournamentModal && (
         <JoinTournamentModal onClose={() => setJoinTournamentModal(false)} tournamentId={Number(tournamentId)} />
       )}
+      {/* Modal de imagem */}
+      <ImageModal
+        imageUrl={currentImage}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
       {open && <VoteModal onClose={() => setOpen(false)} tournamentTitle={data?.title!} tournamentId={Number(tournamentId)} />}
       <div className="w-full h-full mt-[-12px]">
         {data ? (
@@ -177,7 +192,7 @@ export default function TournamentPage() {
                       <div
                         key={winner.photoId}
                         className={
-                          `rounded-lg overflow-hidden shadow-lg transition-transform hover:scale-105
+                          `rounded-lg overflow-hidden shadow-lg
                           ${index === 0 ? 'border-2 border-yellow-400' : ''}
                           ${index === 1 ? 'border-2 border-gray-300' : ''}
                           ${index === 2 ? 'border-2 border-amber-600' : ''}
@@ -203,9 +218,10 @@ export default function TournamentPage() {
 
                           {/* Foto vencedora */}
                           <img
+                            onClick={() => openModal(winner.photoUrl)}
                             src={winner.photoUrl}
                             alt={`Foto vencedora de ${winner.user.name}`}
-                            className="w-full h-64 object-cover"
+                            className="w-full h-64 object-cover cursor-pointer"
                           />
                         </div>
 
