@@ -13,6 +13,7 @@ export interface SubmitVoteRequest {
     method: VotingMethod;
     phase: 1 | 2;
     votes: { photoId: number; voteScore: number }[]; 
+    shownPhotoIds: number[];
 }
 
 const submitVote = async (submitVoteRequest: SubmitVoteRequest) => {

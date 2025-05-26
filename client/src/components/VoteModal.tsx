@@ -115,6 +115,8 @@ export default function VoteModal({ onClose, tournamentTitle, tournamentId }: Vo
 
   const handleSubmitVote = async () => {
     try {
+      if (!startVotingData) return;
+
       const voteScore = (() => {
         switch (method) {
           case "TOP_THREE":
@@ -144,11 +146,14 @@ export default function VoteModal({ onClose, tournamentTitle, tournamentId }: Vo
         }
       })();
 
+      console.log(startVotingData)
+
       await submitVote({
         tournamentId,
         method,
         phase: phaseProgress,
         votes: votes,
+        shownPhotoIds: startVotingData.photoIds
       });
       await refetch();
       setSelectedPhotos([]);

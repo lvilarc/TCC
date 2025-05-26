@@ -12,24 +12,24 @@ interface Tournament {
   createdBy: number;
   createdAt: string;
   updatedAt: string;
-  phase: 1 | 2 | 3 | 4 | 5;
+  phase: 1 | 2 | 3 | 4 ;
   midDate: string;
 }
 
 export const phaseNames: Record<Tournament['phase'], string> = {
   1: 'Início em breve',
   2: 'Aberto',
-  3: 'Votação Etapa 1',
-  4: 'Votação Etapa 2',
-  5: 'Encerrado',
+  3: 'Votação',
+  // 4: 'Votação Etapa 2',
+  4: 'Encerrado',
 };
 
 export const phaseColors: Record<Tournament['phase'], string> = {
   1: 'bg-stone-500',
   2: 'bg-emerald-600',
   3: 'bg-indigo-600',
-  4: 'bg-indigo-700',
-  5: 'bg-red-600',
+  // 4: 'bg-indigo-700',
+  4: 'bg-red-600',
 };
 
 interface TournamentCardProps {
@@ -46,7 +46,7 @@ export default function TournamentCard({ tournament }: TournamentCardProps) {
         <div className={`${phaseColors[tournament.phase]} pl-4 pr-5 py-1 rounded-tl-3xl rounded-bl text-white text-center bottom-0 right-0 absolute z-20 shadow-md`}>
           <h2 className="text-lg font-semibold">{phaseNames[tournament.phase]}</h2>
         </div>
-        {tournament.phase === 3 || tournament.phase === 4 ? (
+        {tournament.phase === 3 ? (
           <div className="absolute right-2 top-2 w-[140px] z-20">
             <VoteAgoraIcon />
           </div>

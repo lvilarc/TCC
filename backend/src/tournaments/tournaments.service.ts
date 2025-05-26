@@ -7,6 +7,8 @@ import { JwtPayload } from 'src/auth/jwt-payload.interface';
 import { S3Service } from 'src/s3/s3.service';
 import { TournamentFilter } from './enums/tournament-filter.enum';
 
+
+
 @Injectable()
 export class TournamentsService {
   constructor(
@@ -74,8 +76,9 @@ export class TournamentsService {
       filteredTournaments = tournaments.filter(tournament => {
         const startDate = new Date(tournament.startDate);
         const endDate = new Date(tournament.endDate);
-        const midDate = new Date((startDate.getTime() + endDate.getTime()) / 2); // Metade do período
-        return (currentDate >= startDate && currentDate < midDate) || (currentDate >= midDate && currentDate < endDate);
+        // const midDate = new Date((startDate.getTime() + endDate.getTime()) / 2); // Metade do período
+        // return (currentDate >= startDate && currentDate < midDate) || (currentDate >= midDate && currentDate < endDate);
+        return (currentDate >= startDate) && (currentDate <= endDate);
       });
     } else if (filter === TournamentFilter.CLOSED) {
       filteredTournaments = tournaments.filter(tournament => currentDate >= new Date(tournament.endDate));
@@ -91,18 +94,18 @@ export class TournamentsService {
         const preSubmissionDate = new Date(
           startDate.getTime() - 8 * 24 * 60 * 60 * 1000,
         ); // 8 dias antes do início
-        const midDate = new Date((startDate.getTime() + endDate.getTime()) / 2); // Metade do período
+        // const midDate = new Date((startDate.getTime() + endDate.getTime()) / 2); // Metade do período
 
         if (currentDate < preSubmissionDate) {
           phase = 1; // 'Início em breve';
         } else if (currentDate >= preSubmissionDate && currentDate < startDate) {
           phase = 2; // 'Aberto';
-        } else if (currentDate >= startDate && currentDate < midDate) {
-          phase = 3; // 'Votação 1/2';
-        } else if (currentDate >= midDate && currentDate < endDate) {
-          phase = 4; // 'Votação 2/2';
+        } else if (currentDate >= startDate && currentDate < endDate) {
+          phase = 3; // 'Votação';
+          // } else if (currentDate >= midDate && currentDate < endDate) {
+          // phase = 4; // 'Votação 2/2';
         } else {
-          phase = 5; // 'Encerrado';
+          phase = 4; // 'Encerrado';
         }
 
         // Encontrando a chave da foto associada ao torneio
@@ -117,7 +120,7 @@ export class TournamentsService {
         return {
           ...tournament,
           phase, // Fase calculada
-          midDate,
+          // midDate,
           bannerUrl, // URL do banner
         };
       })
@@ -132,7 +135,16 @@ export class TournamentsService {
       const tournament = await this.prisma.tournament.findUnique({
         where: { id: Number(id) },
         include: {
-          banner: true,  // Incluir o banner relacionado ao torneio
+          banner: true,
+          participations: {  // Incluir as participações com foto e usuário
+            include: {
+              photo: {
+                include: {
+                  user: true  // Incluir o dono da foto
+                }
+              }
+            }
+          }
         }
       });
 
@@ -149,18 +161,18 @@ export class TournamentsService {
       const preSubmissionDate = new Date(
         startDate.getTime() - 8 * 24 * 60 * 60 * 1000,
       ); // 8 dias antes do início
-      const midDate = new Date((startDate.getTime() + endDate.getTime()) / 2); // Metade do período
+      // const midDate = new Date((startDate.getTime() + endDate.getTime()) / 2); // Metade do período
 
       if (currentDate < preSubmissionDate) {
         phase = 1; // 'Início em breve';
       } else if (currentDate >= preSubmissionDate && currentDate < startDate) {
         phase = 2; // 'Aberto';
-      } else if (currentDate >= startDate && currentDate < midDate) {
-        phase = 3; // 'Votação 1/2';
-      } else if (currentDate >= midDate && currentDate < endDate) {
-        phase = 4; // 'Votação 2/2';
+      } else if (currentDate >= startDate && currentDate < endDate) {
+        phase = 3; // 'Votação';
+        // } else if (currentDate >= midDate && currentDate < endDate) {
+        // phase = 4; // 'Votação 2/2';
       } else {
-        phase = 5; // 'Encerrado';
+        phase = 4; // 'Encerrado';
       }
 
       // Encontrando a chave da foto associada ao torneio
@@ -172,11 +184,60 @@ export class TournamentsService {
         bannerUrl = await this.s3Service.generatePresignedUrl(photoKey);
       }
 
+      // Se o torneio estiver encerrado, calcular as fotos vencedoras
+      let winners: any | null = null;
+      if (phase === 4) {
+        // Agrupar votos por foto e calcular pontuação total
+        const photoVotes = await this.prisma.photoVote.groupBy({
+          by: ['photoId'],
+          where: {
+            tournamentId: tournament.id
+          },
+          _sum: {
+            voteScore: true
+          },
+          orderBy: {
+            _sum: {
+              voteScore: 'desc'
+            }
+          }
+        });
+
+        // Mapear para incluir informações completas das fotos
+        winners = await Promise.all(photoVotes.map(async (vote) => {
+          const participation = tournament.participations.find(p => p.photoId === vote.photoId);
+          if (!participation) return null;
+
+          const photo = participation.photo;
+          const user = photo.user;
+
+          return {
+            photoId: photo.id,
+            photoTitle: photo.title,
+            location: photo.location,
+            likes: photo.likes,
+            photoUrl: await this.s3Service.generatePresignedUrl(photo.key),
+            user: {
+              id: user.id,
+              username: user.username,
+              name: user.name,
+              photographerCategory: user.photographerCategory
+            },
+            totalScore: vote._sum.voteScore
+          };
+        }));
+
+        // Remover possíveis nulls e limitar se necessário
+        winners = winners.filter(Boolean);
+      }
+
       return {
         ...tournament,
         phase, // Fase calculada
-        midDate,
+        // midDate,
+        preSubmissionDate,
         bannerUrl, // URL do banner
+        winners: phase === 4 ? winners : undefined
       };
     } catch (error) {
       throw new Error('Erro ao buscar torneio');

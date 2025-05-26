@@ -33,38 +33,38 @@ export class VoteController {
     @Body() voteData: {
       tournamentId: number;
       method: VotingMethod;
-      phase: number;
       votes: { photoId: number; voteScore: number }[];
+      shownPhotoIds: number[];
     },
     @User() user: UserSchema | null
   ) {
     if (!user) {
       throw new UnauthorizedException('Sem autorização.');
     }
-  
-    const { tournamentId, method, phase, votes } = voteData;
-  
-    if (!tournamentId || !method || !phase || !votes?.length) {
-      throw new BadRequestException('Dados inválidos. Certifique-se de enviar tournamentId, method, phase e votes.');
+    console.log(voteData);
+    const { tournamentId, method, votes, shownPhotoIds } = voteData;
+
+    if (!tournamentId || !method || !votes?.length || !shownPhotoIds?.length) {
+      throw new BadRequestException('Dados inválidos. Certifique-se de enviar todos os campos obrigatórios.');
     }
-  
+
     // Verifica se o usuário já votou nesta fase
-    const hasVoted = await this.voteService.hasUserVoted(user.id, tournamentId, phase, method);
+    const hasVoted = await this.voteService.hasUserVoted(user.id, tournamentId, method);
     if (hasVoted) {
       throw new BadRequestException('Você já votou nesta fase.');
     }
-  
+
     // Registrar os votos
-    await this.voteService.submitVotes(user.id, tournamentId, method, votes);
-  
+    await this.voteService.submitVotes(user.id, tournamentId, method, votes, shownPhotoIds);
+
     // Salva ou atualiza o progresso da votação
-    await this.voteService.saveVotingProgress(user.id, tournamentId, phase, method);
-  
+    await this.voteService.saveVotingProgress(user.id, tournamentId, method);
+
     return { message: 'Voto registrado com sucesso!' };
   }
-  
 
-  
+
+
 
 
   // @Get()

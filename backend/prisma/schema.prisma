@@ -59,6 +59,7 @@ model Tournament {
   banner         Photo            @relation(fields: [bannerId], references: [id])
   votingProgress VotingProgress[]
   photoVote      PhotoVote[]
+  photoExposures PhotoExposure[]
 
   @@map("tournaments")
 }
@@ -92,6 +93,8 @@ model Photo {
 
   tournament Tournament? @relation
   photoVote  PhotoVote[]
+
+  photoExposures PhotoExposure[]
 
   postId Int? // Campo opcional para armazenar o ID do post
   post   Post? @relation(fields: [postId], references: [id])
@@ -128,13 +131,14 @@ model VotingProgress {
   userId       Int
   tournamentId Int
   method       VotingMethod
-  phase        Int // 1 para Fase 1, 2 para Fase 2
+  // phase        Int // 1 para Fase 1, 2 para Fase 2
   completed    Boolean      @default(false) // Se terminou a votação da Fase (Votou em todos os métodos)
 
   user       User       @relation(fields: [userId], references: [id])
   tournament Tournament @relation(fields: [tournamentId], references: [id])
 
-  @@unique([userId, tournamentId, phase])
+  // @@unique([userId, tournamentId, phase])
+  @@unique([userId, tournamentId])
 }
 
 model PhotoVote {
@@ -153,6 +157,20 @@ model PhotoVote {
   @@unique([userId, photoId, tournamentId, method]) // Evita duplicação de votos do mesmo usuário
 }
 
+model PhotoExposure {
+  id           Int          @id @default(autoincrement())
+  photoId      Int
+  tournamentId Int
+  method       VotingMethod
+  viewCount    Int          @default(0) // Quantas vezes a foto foi exibida
+  lastShownAt  DateTime? // Quando foi exibida pela última vez
+
+  photo      Photo      @relation(fields: [photoId], references: [id])
+  tournament Tournament @relation(fields: [tournamentId], references: [id])
+
+  @@unique([photoId, tournamentId, method])
+}
+
 model Post {
   id        Int       @id @default(autoincrement())
   content   String
@@ -160,7 +178,7 @@ model Post {
   authorId  Int
   author    User      @relation(fields: [authorId], references: [id])
   comments  Comment[]
-  photos     Photo[]
+  photos    Photo[]
 }
 
 model Comment {
@@ -172,5 +190,3 @@ model Comment {
   authorId  Int
   author    User     @relation(fields: [authorId], references: [id])
 }
-
-
