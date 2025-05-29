@@ -17,6 +17,15 @@ export class PhotosService {
     type: PhotoType,
   ): Promise<Photo> {
     try {
+      if (type === PhotoType.PROFILE_AVATAR) {
+        await this.prisma.photo.deleteMany({
+          where: {
+            userId: user.id,
+            type: PhotoType.PROFILE_AVATAR,
+          },
+        });
+      }
+
       const key = await this.s3Service.uploadFile(file); // ← pode lançar erro
 
       const photo = await this.prisma.photo.create({

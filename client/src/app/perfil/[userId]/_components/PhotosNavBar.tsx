@@ -1,3 +1,5 @@
+import { useRouter } from 'next/navigation'; // Next.js 13+
+
 type PerfilNavBarProps = {
   setNavPage: React.Dispatch<React.SetStateAction<"feed" | "tournament" | "comunidade">>;
   navPage: "feed" | "tournament" | "comunidade";
@@ -7,47 +9,52 @@ export default function PerfilNavBar({
   setNavPage,
   navPage,
 }: PerfilNavBarProps) {
+  const router = useRouter();
+
+  const handleNavClick = (page: "feed" | "tournament" | "comunidade") => {
+    setNavPage(page);
+    // Atualiza a URL sem adicionar ao histórico
+    router.replace(`#${page}`, { scroll: false });
+  };
+
   return (
     <nav className="p-4 mt-10 border-b-2">
       <ul className="flex justify-start space-x-8">
         <li>
-          <a
-            href="#feed"
+          <button
             className={
               navPage === "feed"
                 ? "text-gray-800 border-b-2 border-black pb-5 font-bold"
                 : "text-gray-600 hover:text-gray-800 font-semibold"
             }
-            onClick={() => setNavPage("feed")}
+            onClick={() => handleNavClick("feed")}
           >
             Feed
-          </a>
+          </button>
         </li>
         <li>
-          <a
-            href="#torneios"
+          <button
             className={
               navPage === "tournament"
                 ? "text-gray-800 border-b-2 border-black pb-5 font-bold"
                 : "text-gray-600 hover:text-gray-800 font-semibold"
             }
-            onClick={() => setNavPage("tournament")}
+            onClick={() => handleNavClick("tournament")}
           >
             Torneios
-          </a>
+          </button>
         </li>
         <li>
-          <a
-            href="#comunidade"
+          <button
             className={
               navPage === "comunidade"
                 ? "text-gray-800 border-b-2 border-black pb-5 font-bold"
                 : "text-gray-600 hover:text-gray-800 font-semibold"
             }
-            onClick={() => setNavPage("comunidade")}
+            onClick={() => handleNavClick("comunidade")}
           >
             Comunidade
-          </a>
+          </button>
         </li>
       </ul>
     </nav>

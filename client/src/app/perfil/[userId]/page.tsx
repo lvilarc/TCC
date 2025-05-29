@@ -13,9 +13,13 @@ import PerfilNavBar from "./_components/PhotosNavBar";
 import { useAuthContext } from "@/hooks/AuthContext/useAuthContext";
 import ComunidadeTab from "./_components/ComunidadeTab";
 import { useUpdateUserDescription } from "@/hooks/User/useUpdateUserDescription";
+import UploadProfilePhotoModal from "@/components/UploadProfilePhotoModal";
 
 export default function PerfilPage() {
   const { userId } = useParams();
+
+  const [isPhotoModalOpen, setIsPhotoModalOpen] = useState(false);
+  // const { updateProfilePhoto, isPending: isUpdatingPhoto } = useUpdateProfilePhoto();
 
   const { data: userData, isLoading, isError } = useUser(Number(userId));
   const { user } = useAuthContext();
@@ -85,19 +89,36 @@ export default function PerfilPage() {
         ) : (
           <div className="w-full h-full bg-stone-200" />
         )}
-        <div className="w-28 h-28 rounded-full border-2 absolute -bottom-10 left-12 overflow-hidden bg-white flex items-center justify-center">
+        <div className="w-28 h-28 rounded-full border-2 absolute -bottom-10 left-12 bg-white flex items-center justify-center">
           {profilePhoto?.url ? (
             <Image
               src={profilePhoto.url}
               layout="fill"
               objectFit="cover"
               alt="Foto de perfil do usuário"
+              className="rounded-full"
             />
           ) : (
             <UserCircle size={112} />
           )}
+          {isOwner && (
+            <button
+              onClick={() => setIsPhotoModalOpen(true)}
+              className="absolute bottom-0 right-0 bg-white border border-gray-200 shadow-md text-stone-800 p-2 rounded-full"
+              aria-label="Editar foto de perfil"
+            >
+              <Edit size={16} />
+            </button>
+          )}
         </div>
       </div>
+
+      {isPhotoModalOpen && (
+        <UploadProfilePhotoModal
+          onClose={() => setIsPhotoModalOpen(false)}
+          currentPhotoUrl={profilePhoto?.url}
+        />
+      )}
 
       <div className="grid grid-cols-4 w-full h-full">
         <div className="flex flex-col col-span-1 p-12 gap-4">

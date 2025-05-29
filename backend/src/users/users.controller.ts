@@ -41,6 +41,26 @@ export class UsersController {
     return photo;
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Post('perfil/photo')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadPerfilPhoto(
+    @UploadedFile() file: Express.Multer.File,
+    @User() user: UserSchema | null,
+  ) {
+    if (!user) {
+      throw new UnauthorizedException('Usuário não autenticado.');
+    }
+
+    const photo = await this.photosService.createAndUploadPhoto(
+      file,
+      user,
+      PhotoType.PROFILE_AVATAR,
+    );
+
+    return photo;
+  }
+
   @Get(':userId/tournaments')
   async getUserTournaments(@Param('userId') userId: string) {
     return this.tournamentsService.findUserParticipations(Number(userId));
