@@ -39,10 +39,13 @@ export default function FeedTab({ userId, isOwner }: { userId: number, isOwner: 
           {isOwner ? (
             <AddPhotoCard></AddPhotoCard>
           ) : (
-            <div className="w-full mt-12 text-center space-y-3">
-              <CameraOff className="w-10 h-10 text-stone-800 mx-auto" />
-              <p className="text-stone-800 text-lg font-medium">
+            <div className="flex flex-col items-center justify-center py-12 text-center space-y-3 max-w-[900px] mx-auto">
+              <CameraOff className="w-10 h-10 text-stone-400" />
+              <p className="text-lg font-medium text-stone-600">
                 Ainda não há nenhuma foto
+              </p>
+              <p className="text-sm text-stone-500">
+                Quando o usuário publicar fotos, elas aparecerão aqui
               </p>
             </div>
           )}

@@ -29,12 +29,17 @@ export class PostService {
             },
         });
 
-        // Gerar URL assinada da(s) foto(s) do post
-        for (const photo of post.photos) {
-            photo.url = await this.s3Service.generatePresignedUrl(photo.key);
-        }
+        const photosWithUrls = await Promise.all(
+            post.photos.map(async (photo) => ({
+                ...photo,
+                url: await this.s3Service.generatePresignedUrl(photo.key),
+            }))
+        );
 
-        return post;
+        return {
+            ...post,
+            photos: photosWithUrls,
+        };
     }
 
     async createComment(postId: number, content: string, user: UserSchema) {
@@ -97,46 +102,54 @@ export class PostService {
             },
         });
 
-        for (const post of posts) {
-            // Avatar do autor do post
+        const postsWithUrls = await Promise.all(posts.map(async (post) => {
             const authorAvatarKey = post.author.photos[0]?.key;
             const authorAvatarUrl = authorAvatarKey
                 ? await this.s3Service.generatePresignedUrl(authorAvatarKey)
                 : null;
 
-            (post.author as any) = {
-                id: post.author.id,
-                name: post.author.name,
-                avatarUrl: authorAvatarUrl,
-            };
+            const photosWithUrls = await Promise.all(
+                post.photos.map(async (photo) => ({
+                    ...photo,
+                    url: await this.s3Service.generatePresignedUrl(photo.key),
+                }))
+            );
 
-            // Avatares dos autores dos comentários
-            for (const comment of post.comments) {
+            const commentsWithAvatars = await Promise.all(post.comments.map(async (comment) => {
                 const commentAvatarKey = comment.author.photos[0]?.key;
                 const commentAvatarUrl = commentAvatarKey
                     ? await this.s3Service.generatePresignedUrl(commentAvatarKey)
                     : null;
 
-                (comment.author as any) = {
-                    id: comment.author.id,
-                    name: comment.author.name,
-                    avatarUrl: commentAvatarUrl,
+                return {
+                    ...comment,
+                    author: {
+                        id: comment.author.id,
+                        name: comment.author.name,
+                        avatarUrl: commentAvatarUrl,
+                    },
                 };
-            }
+            }));
 
-            // Fotos anexadas ao post
-            for (const photo of post.photos) {
-                photo.url = await this.s3Service.generatePresignedUrl(photo.key);
-            }
-        }
+            return {
+                ...post,
+                author: {
+                    id: post.author.id,
+                    name: post.author.name,
+                    avatarUrl: authorAvatarUrl,
+                },
+                photos: photosWithUrls,
+                comments: commentsWithAvatars,
+            };
+        }));
 
-        return posts;
+        return postsWithUrls;
     }
 
     async findAllByAuthor(authorId: number) {
         const posts = await this.prisma.post.findMany({
             where: {
-                authorId: authorId,
+                authorId,
             },
             orderBy: {
                 createdAt: 'desc',
@@ -183,37 +196,51 @@ export class PostService {
             },
         });
 
-        for (const post of posts) {
+        const postsWithExtras = await Promise.all(posts.map(async (post) => {
             const authorAvatarKey = post.author.photos[0]?.key;
             const authorAvatarUrl = authorAvatarKey
                 ? await this.s3Service.generatePresignedUrl(authorAvatarKey)
                 : null;
 
-            (post.author as any) = {
-                id: post.author.id,
-                name: post.author.name,
-                avatarUrl: authorAvatarUrl,
+            const photosWithUrls = await Promise.all(
+                post.photos.map(async (photo) => ({
+                    ...photo,
+                    url: await this.s3Service.generatePresignedUrl(photo.key),
+                }))
+            );
+
+            const commentsWithAvatars = await Promise.all(
+                post.comments.map(async (comment) => {
+                    const commentAvatarKey = comment.author.photos[0]?.key;
+                    const commentAvatarUrl = commentAvatarKey
+                        ? await this.s3Service.generatePresignedUrl(commentAvatarKey)
+                        : null;
+
+                    return {
+                        ...comment,
+                        author: {
+                            id: comment.author.id,
+                            name: comment.author.name,
+                            avatarUrl: commentAvatarUrl,
+                        },
+                    };
+                })
+            );
+
+            return {
+                ...post,
+                author: {
+                    id: post.author.id,
+                    name: post.author.name,
+                    avatarUrl: authorAvatarUrl,
+                },
+                photos: photosWithUrls,
+                comments: commentsWithAvatars,
             };
+        }));
 
-            for (const comment of post.comments) {
-                const commentAvatarKey = comment.author.photos[0]?.key;
-                const commentAvatarUrl = commentAvatarKey
-                    ? await this.s3Service.generatePresignedUrl(commentAvatarKey)
-                    : null;
-
-                (comment.author as any) = {
-                    id: comment.author.id,
-                    name: comment.author.name,
-                    avatarUrl: commentAvatarUrl,
-                };
-            }
-
-            for (const photo of post.photos) {
-                photo.url = await this.s3Service.generatePresignedUrl(photo.key);
-            }
-        }
-
-        return posts;
+        return postsWithExtras;
     }
+
 
 }

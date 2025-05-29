@@ -22,7 +22,7 @@ export class PhotosService {
       const photo = await this.prisma.photo.create({
         data: {
           key: key,
-          url: '', // pode ser atualizado depois com presigned URL
+          // url: '', // pode ser atualizado depois com presigned URL
           type: type,
           user: {
             connect: { id: user.id },

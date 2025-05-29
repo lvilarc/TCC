@@ -5,7 +5,7 @@ import { User } from '@prisma/client';
 
 @Injectable()
 export class UsersService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   async createUser(signUpData: SignUpRequest) {
     const user = await this.prisma.user.create({
@@ -37,5 +37,12 @@ export class UsersService {
     } catch (error) {
       throw new Error('Erro ao buscar o usuário');
     }
+  }
+
+  async updateUserDescription(userId: number, desc: string) {
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: { desc },
+    });
   }
 }

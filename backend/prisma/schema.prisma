@@ -7,29 +7,30 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Rank {
-  OBSERVADOR_INICIANTE // Níveis 0-4
-  EXPLORADOR_DE_LENTES // Níveis 5-9
-  ARTISTA_DA_LUZ // Níveis 10-14
-  NARRADOR_VISUAL // Níveis 15-19
-  MESTRE_DA_COMPOSICAO // Níveis 20-24
-  LENDARIO_DA_FOTOGRAFIA // Níveis 25-30
-}
+// enum Rank {
+//   OBSERVADOR_INICIANTE // Níveis 0-4
+//   EXPLORADOR_DE_LENTES // Níveis 5-9
+//   ARTISTA_DA_LUZ // Níveis 10-14
+//   NARRADOR_VISUAL // Níveis 15-19
+//   MESTRE_DA_COMPOSICAO // Níveis 20-24
+//   LENDARIO_DA_FOTOGRAFIA // Níveis 25-30
+// }
 
 model User {
-  id                   Int      @id @default(autoincrement())
-  username             String   @unique
-  email                String   @unique
-  name                 String
-  passwordHash         String
-  xp                   Int      @default(0)
-  level                Int      @default(1)
-  rank                 Rank     @default(OBSERVADOR_INICIANTE)
-  photographerCategory String   @default("Entusiasta")
-  city                 String?
-  country              String?
-  createdAt            DateTime @default(now())
-  updatedAt            DateTime @updatedAt
+  id           Int      @id @default(autoincrement())
+  username     String   @unique
+  email        String   @unique
+  name         String
+  passwordHash String
+  desc         String?
+  // xp                   Int      @default(0)
+  // level                Int      @default(1)
+  // rank                 Rank     @default(OBSERVADOR_INICIANTE)
+  // photographerCategory String   @default("Entusiasta")
+  // city                 String?
+  // country              String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   createdTournaments Tournament[] // Torneios criados pelo usuário
   photos             Photo[] // Fotos enviadas pelo usuário
@@ -79,9 +80,9 @@ model Photo {
   userId    Int // ID do usuário que enviou a foto
   title     String?
   location  String?
-  likes     Int       @default(0)
+  // likes     Int       @default(0)
   key       String // Key do arquivo no S3 (identificador único do arquivo no bucket)
-  url       String // URL da foto (armazenada no S3, por exemplo)
+  // url       String // URL da foto (armazenada no S3, por exemplo)
   type      PhotoType // Tipo da foto
   createdAt DateTime  @default(now()) // Data de criação da foto
   updatedAt DateTime  @updatedAt // Data de atualização da foto

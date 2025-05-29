@@ -14,12 +14,13 @@ export interface User {
   email: string;
   name: string;
   passwordHash: string;
-  xp: number;
-  level: number;
-  rank: Rank;
-  photographerCategory: string;
-  city?: string;
-  country?: string;
+  desc: string;
+  // xp: number;
+  // level: number;
+  // rank: Rank;
+  // photographerCategory: string;
+  // city?: string;
+  // country?: string;
   createdAt: Date;
   updatedAt: Date;
 

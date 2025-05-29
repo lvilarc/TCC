@@ -10,5 +10,6 @@ import { S3Service } from 'src/s3/s3.service';
   imports: [AuthModule],
   controllers: [TournamentsController],
   providers: [TournamentsService, PrismaService, PhotosService, S3Service],
+  exports: [TournamentsService]
 })
 export class TournamentsModule {}
