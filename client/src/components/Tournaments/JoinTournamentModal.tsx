@@ -114,6 +114,10 @@ export default function JoinTournamentModal({ onClose, tournamentId }: JoinTourn
             return;
         }
         const { title, location, file } = uploadedPhoto;
+        if (!title) {
+            setErrorMessage("Digite um título para a foto.");
+            return;
+        }
         // if (!title || !location) {
         //     setErrorMessage("Preencha todos os campos obrigatórios.");
         //     return;
@@ -179,6 +183,7 @@ export default function JoinTournamentModal({ onClose, tournamentId }: JoinTourn
                                 onClick={() => {
                                     setUploadedPhoto(null);
                                     setPhotoURL(null);
+                                    setErrorMessage(null);
                                 }}
                             ><CloseIcon /></button>
                         </div>
@@ -188,7 +193,7 @@ export default function JoinTournamentModal({ onClose, tournamentId }: JoinTourn
                                 type="text"
                                 id="title"
                                 className="mt-1 p-2 border border-gray-300 rounded w-full"
-                                placeholder="(Opcional)"
+                                placeholder="Digite o título da foto..."
                                 value={uploadedPhoto.title}
                                 onChange={(e) => handlePhotoTitleChange(e.target.value)}
                             />
@@ -203,12 +208,13 @@ export default function JoinTournamentModal({ onClose, tournamentId }: JoinTourn
                                     onChange={(e) => handlePhotoLocationChange(e.target.value)}
                                 />
                             </div>
-                            <div className="w-full flex justify-end mt-10">
+                            <div className="w-full flex justify-end mt-10 gap-4">
+                                {errorMessage && <p className="text-red-500 font-medium flex text-sm items-center gap-2">{errorMessage}</p>}
                                 <button
                                     disabled={isPending}
                                     className="bg-black min-w-[250px] px-4 py-2 text-white rounded-md font-medium flex justify-center items-center"
                                     onClick={handleSubmit}
-                                >{isPending ? <LoadingIcon size={6}/> : 'Registrar participação'}</button>
+                                >{isPending ? <LoadingIcon size={6} /> : 'Registrar participação'}</button>
                             </div>
                         </div>
                     </div>
