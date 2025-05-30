@@ -78,8 +78,8 @@ enum PhotoType {
 model Photo {
   id        Int       @id @default(autoincrement()) // ID da foto
   userId    Int // ID do usuário que enviou a foto
-  title     String?
-  location  String?
+  // title     String?
+  // location  String?
   // likes     Int       @default(0)
   key       String // Key do arquivo no S3 (identificador único do arquivo no bucket)
   // url       String // URL da foto (armazenada no S3, por exemplo)

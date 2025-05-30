@@ -213,8 +213,8 @@ export class TournamentsService {
 
           return {
             photoId: photo.id,
-            photoTitle: photo.title,
-            location: photo.location,
+            // photoTitle: photo.title,
+            // location: photo.location,
             // likes: photo.likes,
             photoUrl: await this.s3Service.generatePresignedUrl(photo.key),
             user: {
@@ -245,105 +245,105 @@ export class TournamentsService {
   }
 
   async findUserParticipations(userId: number) {
-  // 1. Buscar todas as participações do usuário com informações do torneio
-  const participations = await this.prisma.participation.findMany({
-    where: { userId },
-    include: {
-      tournament: {
-        include: {
-          banner: true
-        }
-      },
-      photo: true
-    },
-    orderBy: {
-      tournament: {
-        endDate: 'desc' // Ordenar por torneios mais recentes primeiro
-      }
-    }
-  });
-
-  // 2. Para cada participação, calcular pontos e posição
-  const participationsWithStats = await Promise.all(
-    participations.map(async (participation) => {
-      // Calcular pontos totais da foto no torneio
-      const photoVotes = await this.prisma.photoVote.aggregate({
-        where: {
-          tournamentId: participation.tournamentId,
-          photoId: participation.photoId
-        },
-        _sum: {
-          voteScore: true
-        }
-      });
-
-      const totalPoints = photoVotes._sum.voteScore || 0;
-
-      // Calcular a posição da foto no torneio
-      const allPhotosInTournament = await this.prisma.photoVote.groupBy({
-        by: ['photoId'],
-        where: {
-          tournamentId: participation.tournamentId
-        },
-        _sum: {
-          voteScore: true
-        },
-        orderBy: {
-          _sum: {
-            voteScore: 'desc'
+    // 1. Buscar todas as participações do usuário com informações do torneio
+    const participations = await this.prisma.participation.findMany({
+      where: { userId },
+      include: {
+        tournament: {
+          include: {
+            banner: true
           }
+        },
+        photo: true
+      },
+      orderBy: {
+        tournament: {
+          endDate: 'desc' // Ordenar por torneios mais recentes primeiro
         }
-      });
-
-      const position = allPhotosInTournament.findIndex(
-        (photo) => photo.photoId === participation.photoId
-      ) + 1; // +1 porque o índice começa em 0
-
-      // Gerar URL do banner e da foto
-      const bannerUrl = participation.tournament.banner 
-        ? await this.s3Service.generatePresignedUrl(participation.tournament.banner.key)
-        : null;
-
-      const photoUrl = participation.photo
-        ? await this.s3Service.generatePresignedUrl(participation.photo.key)
-        : null;
-
-      // Determinar fase do torneio
-      const currentDate = new Date();
-      const startDate = new Date(participation.tournament.startDate);
-      const endDate = new Date(participation.tournament.endDate);
-      const preSubmissionDate = new Date(
-        startDate.getTime() - 8 * 24 * 60 * 60 * 1000,
-      );
-
-      let phase: number;
-      if (currentDate < preSubmissionDate) {
-        phase = 1; // 'Início em breve';
-      } else if (currentDate >= preSubmissionDate && currentDate < startDate) {
-        phase = 2; // 'Aberto';
-      } else if (currentDate >= startDate && currentDate < endDate) {
-        phase = 3; // 'Votação';
-      } else {
-        phase = 4; // 'Encerrado';
       }
+    });
 
-      return {
-        ...participation.tournament,
-        phase,
-        bannerUrl,
-        participation: {
-          photoId: participation.photoId,
-          photoTitle: participation.photo.title,
-          photoUrl,
-          points: totalPoints,
-          position
+    // 2. Para cada participação, calcular pontos e posição
+    const participationsWithStats = await Promise.all(
+      participations.map(async (participation) => {
+        // Calcular pontos totais da foto no torneio
+        const photoVotes = await this.prisma.photoVote.aggregate({
+          where: {
+            tournamentId: participation.tournamentId,
+            photoId: participation.photoId
+          },
+          _sum: {
+            voteScore: true
+          }
+        });
+
+        const totalPoints = photoVotes._sum.voteScore || 0;
+
+        // Calcular a posição da foto no torneio
+        const allPhotosInTournament = await this.prisma.photoVote.groupBy({
+          by: ['photoId'],
+          where: {
+            tournamentId: participation.tournamentId
+          },
+          _sum: {
+            voteScore: true
+          },
+          orderBy: {
+            _sum: {
+              voteScore: 'desc'
+            }
+          }
+        });
+
+        const position = allPhotosInTournament.findIndex(
+          (photo) => photo.photoId === participation.photoId
+        ) + 1; // +1 porque o índice começa em 0
+
+        // Gerar URL do banner e da foto
+        const bannerUrl = participation.tournament.banner
+          ? await this.s3Service.generatePresignedUrl(participation.tournament.banner.key)
+          : null;
+
+        const photoUrl = participation.photo
+          ? await this.s3Service.generatePresignedUrl(participation.photo.key)
+          : null;
+
+        // Determinar fase do torneio
+        const currentDate = new Date();
+        const startDate = new Date(participation.tournament.startDate);
+        const endDate = new Date(participation.tournament.endDate);
+        const preSubmissionDate = new Date(
+          startDate.getTime() - 8 * 24 * 60 * 60 * 1000,
+        );
+
+        let phase: number;
+        if (currentDate < preSubmissionDate) {
+          phase = 1; // 'Início em breve';
+        } else if (currentDate >= preSubmissionDate && currentDate < startDate) {
+          phase = 2; // 'Aberto';
+        } else if (currentDate >= startDate && currentDate < endDate) {
+          phase = 3; // 'Votação';
+        } else {
+          phase = 4; // 'Encerrado';
         }
-      };
-    })
-  );
 
-  return participationsWithStats;
-}
+        return {
+          ...participation.tournament,
+          phase,
+          bannerUrl,
+          participation: {
+            photoId: participation.photoId,
+            photoTitle: participation.title,
+            photoUrl,
+            points: totalPoints,
+            position
+          }
+        };
+      })
+    );
+
+    return participationsWithStats;
+  }
 
 
   update(id: number, updateTournamentDto: UpdateTournamentDto) {
