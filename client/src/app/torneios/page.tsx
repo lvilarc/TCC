@@ -97,7 +97,7 @@ export default function TournamentsPage() {
                                 </DropdownMenuGroup>
                             </DropdownMenuContent>
                         </DropdownMenu>
-                        {user ? (
+                        {user && (user.username == "lvilarc" || user.username == "beventura") ? (
                             <button className="fixed right-4 text-white bg-black bg-opacity-50 rounded-full p-2"
                                 onClick={() => setCreateTournamentModal(true)}
                             ><PlusIcon /></button>
