@@ -4,7 +4,6 @@ import { useState } from "react";
 import Image from "next/image";
 import { UploadIcon } from "@/components/icons/UploadIcon";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { CloseIcon } from "@/components/icons/CloseIcon";
 import { LoadingIcon } from "@/components/icons/LoadingIcon";
 
 interface AddPhotoModalProps {

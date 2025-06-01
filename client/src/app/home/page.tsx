@@ -6,7 +6,7 @@ import { useEffect } from "react";
 export default function Home() {
   const router = useRouter();
 
-  useEffect(()=>{router.push('/torneios')},[])
+  useEffect(() => { router.push('/torneios') }, [router])
 
   return (
     <div className="w-full h-full flex justify-center items-center overflow-y-auto">

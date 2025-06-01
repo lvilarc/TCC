@@ -37,7 +37,7 @@ export default function TournamentsPage() {
         : filterOptions.filter(option => option.value !== "myParticipations");
 
     const filterFromUrl = searchParams.get('filter') || 'all';
-    let validatedFilter = filterOptions.some(opt => opt.value === filterFromUrl) ? filterFromUrl : 'all';
+    const validatedFilter = filterOptions.some(opt => opt.value === filterFromUrl) ? filterFromUrl : 'all';
 
     useEffect(() => {
         if (!user && validatedFilter === 'myParticipations') {

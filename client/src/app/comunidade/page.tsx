@@ -4,7 +4,7 @@ import { Camera, X } from 'lucide-react';
 import { useState } from 'react';
 import PostCard from '@/components/Posts/PostCard';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Post, usePosts } from '@/hooks/Posts/usePosts';
+import { usePosts } from '@/hooks/Posts/usePosts';
 import UploadPhotoPostModal from '@/components/Posts/UploadPhotoPostModal';
 import Image from 'next/image';
 import { useCreatePost } from '@/hooks/Posts/useCreatePost';
@@ -12,7 +12,7 @@ import { useAuthContext } from '@/hooks/AuthContext/useAuthContext';
 
 export default function ComunidadePage() {
     const { data: posts, isLoading } = usePosts();
-    const { createPost, isPending: isPostCreating, isError, error } = useCreatePost();
+    const { createPost, isPending: isPostCreating } = useCreatePost();
     const [content, setContent] = useState('');
     const [images, setImages] = useState<File[]>([]);
     const [showUploadModal, setShowUploadModal] = useState(false);
@@ -106,6 +106,7 @@ export default function ComunidadePage() {
                         <button
                             className="px-4 py-2 bg-black font-semibold text-sm text-white rounded-md hover:bg-slate-600 transition"
                             onClick={handlePublish}
+                            disabled={isPostCreating}
                         >
                             Publicar
                         </button>
