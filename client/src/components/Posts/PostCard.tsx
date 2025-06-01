@@ -44,8 +44,8 @@ const PostCard = ({ post }: { post: Post }) => {
                         <Image
                             src={post.author.avatarUrl}
                             alt="Avatar"
-                            width={40}
-                            height={40}
+                            width={34}
+                            height={34}
                             className="rounded-full"
                         />
                     ) : (

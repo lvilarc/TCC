@@ -252,7 +252,17 @@ export default function TournamentPage() {
                             <Link href={`/perfil/${winner.user.id}`}>
                               <div className="flex-shrink-0 rounded-full">
                                 <div className="w-10 h-10 rounded-full flex items-center justify-center font-bold">
-                                  <UserCircle size={40} />
+                                  {winner.user.avatarUrl ? (
+                                    <Image
+                                      src={winner.user.avatarUrl}
+                                      alt="Avatar"
+                                      width={34}
+                                      height={34}
+                                      className="rounded-full"
+                                    />
+                                  ) : (
+                                    <UserCircle size={40} />
+                                  )}
                                 </div>
                               </div>
                             </Link>

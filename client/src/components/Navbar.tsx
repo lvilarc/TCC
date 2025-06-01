@@ -18,6 +18,8 @@ import LoginModal from './LoginModal';
 import { usePathname, useRouter } from 'next/navigation';
 import { Menu } from 'lucide-react';
 import { LentesBrasileirasLogo } from './icons/LentesBrasileirasLogo';
+import { getUserPhotos } from '@/hooks/User/useUser';
+import Image from 'next/image';
 
 const menuItems = [
     // { name: "Home", path: "/home" },
@@ -34,6 +36,12 @@ export default function Navbar() {
     const [cadastroModalOpen, setCadastroModalOpen] = useState(false);
     const [loginModalOpen, setLoginModalOpen] = useState(false);
 
+    const {
+        data: userPhotos,
+        isLoading: isLoadingPhotos,
+        isError: isErrorPhotos,
+    } = getUserPhotos(Number(user?.id));
+
     useEffect(() => {
         const handleOpenLogin = () => setLoginModalOpen(true);
 
@@ -43,6 +51,10 @@ export default function Navbar() {
             window.removeEventListener("openLoginModal", handleOpenLogin);
         };
     }, []);
+
+    const profilePhoto = userPhotos?.find(
+        (photo) => photo.type === "PROFILE_AVATAR"
+    );
 
     return (
         <>
@@ -67,7 +79,7 @@ export default function Navbar() {
                     <Link href="/">
                         <div className="flex items-center gap-2">
                             {/* <div className="w-6 h-6 rounded-full bg-stone-800" /> */}
-                            <LentesBrasileirasLogo/>
+                            <LentesBrasileirasLogo />
                             <span className="text-base xl:text-xl font-semibold whitespace-nowrap">LentesBrasileiras</span>
                         </div>
                     </Link>
@@ -97,8 +109,19 @@ export default function Navbar() {
 
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <button className="focus:outline-none"
-                                ><UserCircle size={36} /></button>
+                                <button className="focus:outline-none">
+                                    {profilePhoto?.url ? (
+                                        <Image
+                                            src={profilePhoto?.url}
+                                            alt="Avatar"
+                                            width={31}
+                                            height={31} 
+                                            className="rounded-full"
+                                        />
+                                    ) : (
+                                        <UserCircle size={36} />
+                                    )}
+                                </button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent className="w-auto">
                                 <DropdownMenuGroup>

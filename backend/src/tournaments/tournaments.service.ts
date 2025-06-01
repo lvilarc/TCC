@@ -140,7 +140,11 @@ export class TournamentsService {
             include: {
               photo: {
                 include: {
-                  user: true  // Incluir o dono da foto
+                  user: {
+                    include: {
+                      photos: true
+                    }
+                  }
                 }
               }
             }
@@ -211,6 +215,9 @@ export class TournamentsService {
           const photo = participation.photo;
           const user = photo.user;
 
+          const avatarPhoto = user.photos.find(p => p.type === 'PROFILE_AVATAR');
+
+
           return {
             photoId: photo.id,
             // photoTitle: photo.title,
@@ -221,6 +228,9 @@ export class TournamentsService {
               id: user.id,
               username: user.username,
               name: user.name,
+              avatarUrl: avatarPhoto
+                ? await this.s3Service.generatePresignedUrl(avatarPhoto.key)
+                : null
               // photographerCategory: user.photographerCategory
             },
             totalScore: vote._sum.voteScore

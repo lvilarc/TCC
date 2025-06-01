@@ -8,6 +8,7 @@ type TournamentWinner = {
     username: string;
     name: string;
     photographerCategory: string;
+    avatarUrl?: string;
   };
   totalScore: number;
 };
