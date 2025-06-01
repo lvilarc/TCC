@@ -13,8 +13,8 @@ services:
     build: ./backend
     command: npm run start:dev
     working_dir: /app
-    volumes:
-      - ./backend:/app
+    # volumes:
+    #   - ./backend:/app
     env_file:
       - ./backend/.env
     ports:
@@ -26,8 +26,8 @@ services:
     build: ./client
     command: npm run dev
     working_dir: /app
-    volumes:
-      - ./client:/app
+    # volumes:
+    #   - ./client:/app
     env_file:
       - ./client/.env
     ports:
