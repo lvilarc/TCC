@@ -34,9 +34,9 @@ interface UploadProfilePhotoModalProps {
   currentPhotoUrl?: string;
 }
 
-export default function UploadProfilePhotoModal({ 
+export default function UploadProfilePhotoModal({
   onClose,
-  currentPhotoUrl 
+  currentPhotoUrl
 }: UploadProfilePhotoModalProps) {
   const { mutateAsync: uploadProfilePhoto, isPending: isUploading } = useUploadProfilePhoto();
   const [dragging, setDragging] = useState(false);
@@ -98,16 +98,16 @@ export default function UploadProfilePhotoModal({
 
   const handleUpload = async () => {
     if (!completedCrop || !imgRef.current || !previewCanvasRef.current) return;
-    
+
     try {
       // Cria a imagem recortada
       const croppedImageBlob = await getCroppedImg(imgRef.current, completedCrop);
-      
+
       // Converte para File
-      const file = new File([croppedImageBlob], "profile-photo.jpg", { 
-        type: 'image/jpeg' 
+      const file = new File([croppedImageBlob], "profile-photo.jpg", {
+        type: 'image/jpeg'
       });
-      
+
       // Usa o hook para fazer o upload
       await uploadProfilePhoto({ file });
       onClose();
@@ -164,11 +164,11 @@ export default function UploadProfilePhotoModal({
           <Camera size={20} />
           {imgSrc ? "Recortar foto de perfil" : "Atualizar foto de perfil"}
         </DialogTitle>
-        
+
         <div className="flex flex-col items-center gap-6">
           {imgSrc ? (
             <div className="w-full flex flex-col items-center gap-4">
-              <div className="relative w-full max-h-[300px] overflow-hidden">
+              <div className="relative w-full max-w-full flex justify-center overflow-hidden">
                 <ReactCrop
                   crop={crop}
                   onChange={(c) => setCrop(c)}
@@ -177,16 +177,19 @@ export default function UploadProfilePhotoModal({
                   minWidth={100}
                   minHeight={100}
                   ruleOfThirds
-                  className="w-full"
+                  className="max-w-full"
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    maxHeight: '300px'
+                  }}
                 >
-                  <Image
+                  <img
                     ref={imgRef}
                     src={imgSrc}
                     alt="Imagem para recortar"
-                    width={500}
-                    height={300}
-                    style={{ maxHeight: '300px', objectFit: 'contain' }}
                     onLoad={onImageLoad}
+                    className="max-h-[300px] max-w-full h-auto mx-auto"
                   />
                 </ReactCrop>
               </div>
@@ -226,9 +229,8 @@ export default function UploadProfilePhotoModal({
             </div>
           ) : (
             <div
-              className={`w-full h-64 p-1 border-dashed border-2 rounded-lg ${
-                dragging ? 'border-sky-600' : 'border-stone-400'
-              } flex flex-col justify-center items-center space-y-6`}
+              className={`w-full h-64 p-1 border-dashed border-2 rounded-lg ${dragging ? 'border-sky-600' : 'border-stone-400'
+                } flex flex-col justify-center items-center space-y-6`}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
